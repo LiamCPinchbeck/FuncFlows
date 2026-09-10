@@ -3,6 +3,10 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+src/FuncFlows.egg-info*
+src/build
+file_structure.txt
+
 # C extensions
 *.so
 
