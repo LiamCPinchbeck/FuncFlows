@@ -2,6 +2,13 @@ import torch
 
 
 class Basis:
+    """Abstract basis class.
+
+    Args:
+        num_functions (int): Number of functions you want to play around with.
+        physical_dim (int, optional): Number of physical dimensions the functions will be over. Defaults to 1.
+        dtype (optional): Data type. If you're reading this and don't know what that is. God help you. Defaults to torch.float64.
+    """
 
 
 
@@ -32,6 +39,13 @@ class Basis:
 
 
 class CosineBasis(Basis):
+    """Class containing information and stuff for evaluation of Cosine basis functions.
+
+    Args:
+        num_functions (int): Number of functions you want to play around with.
+        physical_dim (int, optional): Number of physical dimensions the functions will be over. Defaults to 1.
+        dtype (optional): Data type. If you're reading this and don't know what that is. God help you. Defaults to torch.float64.
+    """
 
 
 
@@ -49,7 +63,7 @@ class CosineBasis(Basis):
         self.modes = modes[torch.argsort((modes ** 2).sum(1), stable=True)][:num_functions]
 
         self.eval_norm = 1 + (2**0.5 - 1) * (self.modes != 0).to(self.dtype)
-        
+
         self.laplacian_eigenvalues = ((torch.pi * self.modes) ** 2).sum(1)
 
 
@@ -62,13 +76,20 @@ class CosineBasis(Basis):
 
 
 class FourierBasis(Basis):
-    """Periodic Laplacian eigenfunctions on [0,1]^d: 1, sqrt2 cos(2 pi k t), sqrt2 sin(2 pi k t), ...
+    """Class containing information and stuff for evaluation of Fourier basis functions.
+    
+    Periodic Laplacian eigenfunctions on [0,1]^d: 1, sqrt2 cos(2 pi k t), sqrt2 sin(2 pi k t), ...
  
     Per axis, mode index m -> wavenumber ceil(m/2); odd m is a cosine, even m > 0 a sine.
     Columns are ordered by Laplacian eigenvalue (2 pi)^2 * sum_axis wavenumber^2.
-    """
+        Args:
+            num_functions (int): Number of functions you want to play around with.
+            physical_dim (int, optional): Number of physical dimensions the functions will be over. Defaults to 1.
+            dtype (optional): Data type. If you're reading this and don't know what that is. God help you. Defaults to torch.float64.
+        """
 
     def __init__(self, num_functions, physical_dim=1, dtype=torch.float64):
+
         super().__init__(num_functions, physical_dim, dtype)
         modes = torch.cartesian_prod(*[torch.arange(2 * num_functions)] * physical_dim).reshape(-1, physical_dim)
         wavenumbers = (modes + 1) // 2
