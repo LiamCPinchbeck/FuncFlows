@@ -6,6 +6,7 @@ __pycache__/
 src/FuncFlows.egg-info*
 src/build
 file_structure.txt
+.vscode/*
 
 # C extensions
 *.so
