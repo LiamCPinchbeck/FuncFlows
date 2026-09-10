@@ -38,3 +38,9 @@ class HouseholderLayer(DiscreteLayer):
 
 
         return coeffs_out, torch.full(coeffs.shape[:-1], math.log(0.5), dtype=coeffs.dtype)
+
+    def pull_back(self, coeffs_out):
+        direction = self.direction_raw / self.direction_raw.norm()
+        head = coeffs_out[..., :self.num_modes]
+        head = head + direction * (head @ direction + self.bias)[..., None]
+        return torch.cat([head, coeffs_out[..., self.num_modes:]], dim=-1)
