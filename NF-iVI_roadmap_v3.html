@@ -1,0 +1,610 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Functional Flows Roadmap</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,500;0,600;1,400&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --ground:#F5F7F5; --paper:#FFFFFF; --ink:#1B232C; --ink-2:#4A5560; --ink-3:#7A858F;
+  --line:#D7DDDA; --accent:#2B6B70; --accent-soft:#DDEBEB; --accent-ink:#1E4F53;
+  --warn:#9C6224; --warn-soft:#F4E9DA; --code-bg:#EEF2F0; --mark:#FFF3C4;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --serif:"Spectral",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#131A1E; --paper:#1A2227; --ink:#E3E8E6; --ink-2:#AEB8B5; --ink-3:#7C8885;
+    --line:#2C373C; --accent:#6DBEC1; --accent-soft:#1F3538; --accent-ink:#9FD8DA;
+    --warn:#D6A05C; --warn-soft:#3A2E1E; --code-bg:#222C31; --mark:#4A4320;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#131A1E; --paper:#1A2227; --ink:#E3E8E6; --ink-2:#AEB8B5; --ink-3:#7C8885;
+  --line:#2C373C; --accent:#6DBEC1; --accent-soft:#1F3538; --accent-ink:#9FD8DA;
+  --warn:#D6A05C; --warn-soft:#3A2E1E; --code-bg:#222C31; --mark:#4A4320;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.55;padding-inline:16px;padding-block:0}
+a{color:var(--accent-ink);text-decoration-thickness:1px;text-underline-offset:3px}
+a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+code{font-family:var(--mono);font-size:.92em;background:var(--code-bg);padding:.08em .32em;border-radius:3px}
+.layout{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:230px minmax(0,1fr);gap:48px;padding-block:32px 96px}
+nav.toc{position:sticky;top:24px;align-self:start;font-size:13.5px}
+nav.toc .eyebrow{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin:0 0 10px}
+nav.toc ol{list-style:none;margin:0;padding:0;border-left:1px solid var(--line)}
+nav.toc li a{display:block;padding:5px 0 5px 12px;color:var(--ink-2);text-decoration:none;border-left:2px solid transparent;margin-left:-1px}
+nav.toc li a:hover{color:var(--ink)}
+nav.toc li a.active{color:var(--accent-ink);border-left-color:var(--accent)}
+nav.toc .sub{padding-left:12px}
+nav.toc .sub a{font-size:12.5px;padding-block:3px}
+.progress{margin-top:18px;padding:12px;border:1px solid var(--line);background:var(--paper);border-radius:4px}
+.progress b{font-variant-numeric:tabular-nums;font-weight:600}
+.progress .bar{height:6px;background:var(--code-bg);border-radius:3px;margin-top:8px;overflow:hidden}
+.progress .bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.progress button{margin-top:10px;font:inherit;font-size:12px;color:var(--ink-2);background:none;border:1px solid var(--line);border-radius:3px;padding:3px 8px;cursor:pointer}
+main{min-width:0}
+header.masthead{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:36px}
+header .eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-ink);margin:0 0 10px}
+h1{font-family:var(--serif);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.15;margin:0 0 12px;text-wrap:balance;letter-spacing:-.01em}
+.lede{max-width:68ch;color:var(--ink-2);margin:0;font-size:17px}
+.papers{display:flex;flex-wrap:wrap;gap:10px 24px;margin-top:16px;font-size:13.5px;color:var(--ink-2)}
+.papers span b{color:var(--ink);font-weight:600}
+section{margin-bottom:56px;scroll-margin-top:24px}
+h2{font-family:var(--serif);font-weight:600;font-size:26px;line-height:1.2;margin:0 0 6px;text-wrap:balance}
+h2 .letter{color:var(--accent);font-style:italic;font-weight:500;margin-right:10px}
+h3{font-family:var(--serif);font-weight:600;font-size:19px;margin:30px 0 8px;text-wrap:balance}
+h4{font-size:15px;font-weight:600;margin:22px 0 6px}
+p,ul,ol{max-width:72ch}
+p{margin:0 0 12px}
+ul,ol{margin:0 0 12px;padding-left:22px}
+li{margin-bottom:5px}
+.note{font-size:14.5px;color:var(--ink-2);max-width:72ch}
+.table-wrap{overflow-x:auto;margin:14px 0 20px;border:1px solid var(--line);border-radius:4px;background:var(--paper)}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:640px}
+th,td{text-align:left;vertical-align:top;padding:9px 12px;border-bottom:1px solid var(--line)}
+th{font-weight:600;background:var(--code-bg);font-size:13px;letter-spacing:.02em}
+tr:last-child td{border-bottom:none}
+td:first-child{white-space:nowrap;font-weight:500}
+/* prompts */
+.prompt{position:relative;background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:4px;padding:16px 18px 16px 18px;margin:12px 0 22px;max-width:78ch}
+.prompt .ptitle{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:8px}
+.prompt .ptitle strong{font-family:var(--serif);font-size:17px;font-weight:600}
+.prompt .ptitle .tag{font-family:var(--mono);font-size:11.5px;color:var(--accent-ink);background:var(--accent-soft);padding:2px 7px;border-radius:3px;white-space:nowrap}
+.prompt .body{font-size:15px;color:var(--ink);white-space:normal}
+.prompt .body p{margin:0 0 10px;max-width:none}
+.prompt .body p:last-child{margin:0}
+.prompt .body ol,.prompt .body ul{max-width:none;margin-bottom:10px}
+.prompt .attach{margin-top:10px;font-size:13px;color:var(--ink-3)}
+.copy{position:absolute;top:12px;right:12px;font:inherit;font-size:12px;color:var(--ink-2);background:var(--ground);border:1px solid var(--line);border-radius:3px;padding:3px 9px;cursor:pointer}
+.copy:hover{color:var(--ink);border-color:var(--ink-3)}
+.copy.done{color:var(--accent-ink);border-color:var(--accent)}
+.prompt.has-copy .ptitle{padding-right:70px}
+/* checklists */
+.phase{margin:18px 0 26px;max-width:78ch}
+.phase h4{margin-top:0}
+.steps{list-style:none;padding:0;margin:0;max-width:none;border-top:1px solid var(--line)}
+.steps li{margin:0;border-bottom:1px solid var(--line);padding:9px 4px;display:grid;grid-template-columns:22px 52px minmax(0,1fr);gap:10px;align-items:start;font-size:14.5px}
+.steps li input{margin:4px 0 0;accent-color:var(--accent);width:15px;height:15px}
+.steps li .id{font-family:var(--mono);font-size:12.5px;color:var(--ink-3);padding-top:2px}
+.steps li .do{color:var(--ink)}
+.steps li .done{display:block;color:var(--ink-2);font-size:13.5px;margin-top:2px}
+.steps li .done::before{content:"done when · ";color:var(--accent-ink);font-weight:500;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase}
+.steps li.checked .do{color:var(--ink-3);text-decoration:line-through;text-decoration-color:var(--line)}
+/* contracts */
+.iface{border:1px solid var(--line);background:var(--paper);border-radius:4px;padding:14px 18px;margin:14px 0;max-width:78ch}
+.iface h4{margin:0 0 8px;font-family:var(--mono);font-weight:500;font-size:15px}
+.iface dl{margin:0;display:grid;grid-template-columns:86px minmax(0,1fr);gap:6px 14px;font-size:14.5px}
+.iface dt{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);padding-top:3px}
+.iface dd{margin:0}
+.iface dd ul{margin:0;padding-left:18px;max-width:none}
+/* audit */
+.qa{max-width:78ch}
+.qa .q{margin:0 0 16px;padding-left:14px;border-left:2px solid var(--line)}
+.qa .q b{display:block;font-family:var(--mono);font-weight:500;font-size:13px;color:var(--accent-ink);margin-bottom:3px}
+details{border:1px solid var(--line);border-radius:4px;background:var(--paper);padding:0 18px;margin:16px 0;max-width:78ch}
+details summary{cursor:pointer;padding:12px 0;font-weight:600;list-style:none;display:flex;align-items:center;gap:10px}
+details summary::before{content:"";width:8px;height:8px;border-right:1.5px solid var(--ink-2);border-bottom:1.5px solid var(--ink-2);transform:rotate(-45deg);transition:transform .15s}
+details[open] summary::before{transform:rotate(45deg)}
+details summary .hint{font-weight:400;font-size:13px;color:var(--ink-3)}
+details .inner{padding-bottom:14px}
+.warnbox{background:var(--warn-soft);border-left:3px solid var(--warn);padding:10px 14px;border-radius:0 4px 4px 0;margin:14px 0;max-width:72ch;font-size:14.5px}
+.refs{font-size:13.5px;color:var(--ink-2);max-width:78ch}
+.refs p{max-width:none}
+footer{border-top:1px solid var(--line);margin-top:40px;padding-top:14px;font-size:13px;color:var(--ink-3)}
+@media (max-width:860px){
+  .layout{grid-template-columns:1fr;gap:24px}
+  nav.toc{position:static}
+  nav.toc ol{display:flex;flex-wrap:wrap;gap:2px 6px;border-left:none}
+  nav.toc .sub{display:none}
+  nav.toc li a{border-left:none;padding:4px 8px;border:1px solid var(--line);border-radius:3px}
+  .progress{margin-top:12px}
+  .steps li{grid-template-columns:22px minmax(0,1fr)}
+  .steps li .id{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc" aria-label="Contents">
+  <p class="eyebrow">Contents</p>
+  <ol>
+    <li><a href="#a">A · One framework, two papers</a></li>
+    <li><a href="#b">B · Skeleton contract</a>
+      <ol class="sub">
+        <li><a href="#b1">Interfaces</a></li>
+        <li><a href="#b2">Contract tests</a></li>
+        <li><a href="#b3">Extension points</a></li>
+      </ol></li>
+    <li><a href="#c">C · Roadmap</a></li>
+    <li><a href="#d">D · Theory prompts</a></li>
+    <li><a href="#e">E · Design prompts</a></li>
+    <li><a href="#f">F · Audit questions</a></li>
+    <li><a href="#g">G · Answer key &amp; references</a></li>
+  </ol>
+  <div class="progress" id="progress">
+    <div>Roadmap <b id="pcount">0 / 0</b> steps</div>
+    <div class="bar"><i id="pbar"></i></div>
+    <button type="button" id="preset">Reset checkboxes</button>
+  </div>
+</nav>
+
+<main>
+<header class="masthead">
+  <p class="eyebrow">Working document · v3</p>
+  <h1>Functional normalizing flows: roadmap, skeleton contract, theory &amp; design prompts</h1>
+  <p class="lede">A contract and roadmap for building your own skeleton around infinite-dimensional normalizing flows — discrete (NF-iVI) and continuous (f-CNF) — plus prompts to work through the theory and interrogate the reference code. No implementation is prescribed; the contracts and tests are what matter.</p>
+  <div class="papers">
+    <span><b>P1</b> arXiv:2411.13277v3 — NF-iVI, discrete functional flows, posterior VI, code public</span>
+    <span><b>P2</b> arXiv:2609.03343v1 — f-CNF, continuous functional flows, learned priors, no code</span>
+    <span><b>Supp</b> supplement of P2</span>
+  </div>
+</header>
+
+<!-- ============================ A ============================ -->
+<section id="a">
+<h2><span class="letter">A</span>One framework, two papers</h2>
+<div class="table-wrap">
+<table>
+<thead><tr><th></th><th>P1 (NF-iVI)</th><th>P2 (f-CNF)</th></tr></thead>
+<tbody>
+<tr><td>Reference measure</td><td><code>μ₀ = N(0, C₀)</code>, <code>C₀ = (I − αΔ)^{-2}</code></td><td>same (α differs; periodic BC in scattering)</td></tr>
+<tr><td>Map</td><td><code>f = f_N ∘ … ∘ f_1</code>, <code>f_n = I + F_n</code>, <code>F_n</code> finite-rank into <code>H</code></td><td><code>f</code> = ODE flow of <code>dv/dt = h(v,t;θ)</code>, <code>h(·,t)</code> finite-rank into <code>H</code> (Def. 4)</td></tr>
+<tr><td>Log RN at <code>f(u)</code></td><td><code>−Σ ln|det₁(I + DF_n)| + ½‖F‖²_H + ⟨u, F⟩_H</code>, <code>F = f(u) − u</code> (Supp Lemma 1, p.2–3)</td><td><code>−∫₀ᵀ Tr Dh dt + ½‖F‖²_H + ⟨u, F⟩_H</code> (Thm 5; Supp Thm 2.1 for evaluation at <code>u</code>)</td></tr>
+<tr><td>Relation</td><td>—</td><td>Euler-discretised ODE with step <code>T/N</code> <em>is</em> a P1 flow with layers <code>I + (T/N) h(·, t_n)</code>; RN weights converge (Thm 2, Supp p.4–6)</td></tr>
+<tr><td>Objective</td><td>reverse KL to posterior (Alg. 1)</td><td>NLL on direct samples (Alg. 1) or Sinkhorn on indirect observations (Alg. 2)</td></tr>
+<tr><td>Flow's role</td><td>the approximate posterior</td><td>the prior: <code>dμ/dμ₀ ∝ exp(−Φ + W_θ)</code> (eq. 8)</td></tr>
+<tr><td>Needs <code>f⁻¹</code>?</td><td>no</td><td>yes — for NLL and for <code>W_θ(u)</code> at arbitrary <code>u</code> (backward ODE)</td></tr>
+<tr><td>Sampler after training</td><td>sample the flow</td><td>pCN / S-pCN / SMC-GM on <code>μ₀</code> with potential <code>Φ − W_θ</code> (Supp §2)</td></tr>
+<tr><td>Conditional version</td><td>hypernet on <code>W(x,d)</code> (P1 §3)</td><td>not in P2 — same hypernet idea applies to <code>h</code></td></tr>
+</tbody></table>
+</div>
+<p>Everything in both papers lives, numerically, in the span of the first <code>M</code> (≤ <code>r</code>) eigenfunctions of <code>C₀</code>. So: <strong>state = coefficient vector <code>a ∈ R^r</code></strong>, L² inner product = dot product, <code>‖a‖²_H = Σ a_i²/λ_i</code>, and the mesh enters only through <code>Φ_grid = [φ_i(x_j)]</code> inside forward models and plots.</p>
+</section>
+
+<!-- ============================ B ============================ -->
+<section id="b">
+<h2><span class="letter">B</span>Skeleton contract</h2>
+<p class="note">Not code — a set of interfaces with invariants and the tests that pin them down. Build it however you like; keep the contracts.</p>
+
+<h3 id="b1">B1 · Interfaces</h3>
+
+<div class="iface">
+<h4>Reference — Gaussian μ₀ in coefficient space</h4>
+<dl>
+<dt>has</dt><dd><code>lam[r]</code> (descending), <code>basis(points) → [n_pts, r]</code>, <code>sample(n)</code>, <code>h_inner(a, b)</code>, <code>h_norm2(a)</code>, optionally <code>mean[r]</code>.</dd>
+<dt>invariants</dt><dd><code>basis</code> columns L²-orthonormal on a fine grid; <code>E[h_norm2(sample)] = r</code>; <code>Var[a_i] = lam[i]</code>.</dd>
+<dt>knobs</dt><dd><code>r</code>, <code>α</code>, spectral exponent <code>s</code> (<code>λ = σ^{-s}</code>), boundary condition (Neumann / Dirichlet / periodic), dimension (1-D / 2-D), analytic vs numeric eigenbasis, mode ordering and ties.</dd>
+</dl>
+</div>
+
+<div class="iface">
+<h4>Transport — any measurable map f: R^r → R^r with tractable log RN</h4>
+<dl>
+<dt>methods</dt><dd><ul>
+<li><code>push(a) → (f(a), logw)</code> where <code>logw = ln dμ_f/dμ₀ (f(a))</code>.</li>
+<li><code>pull(b) → a</code> such that <code>push(a)[0] ≈ b</code> (iterative or ODE-backward; may raise <code>NotImplemented</code>).</li>
+<li><code>log_rn_at(b) → ln dμ_f/dμ₀ (b)</code> (default: <code>pull</code> then <code>push</code>; ODE flows do it in one backward solve, Supp Thm 2.1).</li>
+</ul></dd>
+<dt>invariants</dt><dd>(i) <code>logw</code> equals <code>−ln|det J_f(a)| + ½‖F‖²_H + ⟨a, F⟩_H</code> with <code>J_f</code> the <code>r×r</code> autograd Jacobian — matches <code>det₁</code> because <code>F</code> has finite rank; (ii) <code>pull(push(a)) ≈ a</code>; (iii) for an affine <code>f</code> and Gaussian <code>μ₀</code>, <code>E_μ₀[logw]</code> equals the closed-form KL between two Gaussians.</dd>
+<dt>families</dt><dd><ul>
+<li><code>Composite(layers)</code> — P1. Each <code>Layer</code> exposes <code>F(a)</code>, <code>logdet(a)</code>, <code>constraint_penalty()</code>, and metadata <code>modes</code> (which coefficient indices it touches).</li>
+<li><code>ODEFlow(field, T, integrator)</code> — P2. <code>field.h(a, t)</code>, <code>field.trace_Dh(a, t)</code>; the integrator (Euler / RK4 / adaptive) advances <code>(a, ∫Tr)</code> jointly; <code>pull</code> = same integrator with <code>t: T → 0</code>.</li>
+</ul></dd>
+<dt>knobs (discrete)</dt><dd>layer types and order, <code>N</code>, per-layer <code>M</code> and mode index set, constraint parameterisation (tanh / softplus / exp), parameter scaling exponent <code>p</code> in <code>u_n = Σ λ_i^p α_i φ_i</code>, init scale, activation.</dd>
+<dt>knobs (ODE)</dt><dd>field family (planar-sum with <code>L</code> terms / Householder-sum / projected <code>Q R(t)(P u + b(t))</code> / generic MLP in <code>R^M</code>), <code>L</code>, <code>M</code>, <code>T</code>, integrator and <code>n_steps</code>, time-net (depth, width, activation), trace method (analytic rank-1 / autograd <code>M×M</code> / Hutchinson).</dd>
+</dl>
+</div>
+
+<div class="iface">
+<h4>Potential — log-likelihood or learned-prior energy on coefficients</h4>
+<dl>
+<dt>methods</dt><dd><code>__call__(a) → [B]</code>, differentiable. Instances: <code>Misfit(forward_model, d, tau)</code> = <code>½τ‖d − G(a)‖²</code>; <code>LearnedPrior(transport)</code> = <code>−log_rn_at(a)</code>; <code>Sum(...)</code>.</dd>
+<dt>knobs</dt><dd>forward model, observation points / times, noise-level rule, fine-grid data generation.</dd>
+</dl>
+</div>
+
+<div class="iface">
+<h4>Objective — scalar loss from Transport + batch</h4>
+<dl>
+<dt>instances</dt><dd><ul>
+<li><code>ReverseKL(potential, n_samples)</code> — P1 Alg. 1: <code>E_μ₀[ logw + Φ(f(a)) ]</code>.</li>
+<li><code>NLL(dataset)</code> — P2 Alg. 1: <code>−mean log_rn_at(u_data)</code>.</li>
+<li><code>Sinkhorn(forward_model, noise, obs_dataset, eps, batch)</code> — P2 Alg. 2.</li>
+<li><code>Conditional(objective, encoder, hypernet)</code> — P1 Alg. 2 wrapper.</li>
+</ul></dd>
+<dt>invariant</dt><dd>each has a case with a known optimum (Gaussian target ⇒ affine optimum; see T7).</dd>
+</dl>
+</div>
+
+<div class="iface">
+<h4>Sampler</h4>
+<dl>
+<dt>instances</dt><dd><code>pCN(potential, β)</code>, <code>SplitPCN(Φ, W, β, k)</code> (Supp §2.4), optional <code>SMC_GM</code>, optional <code>Laplace</code>. All operate in <code>R^r</code> with <code>μ₀</code> proposals.</dd>
+</dl>
+</div>
+
+<div class="iface">
+<h4>Experiment</h4>
+<dl>
+<dt>shape</dt><dd>plain dict of knobs → builds the above → returns <code>{samples, diagnostics}</code>. No framework.</dd>
+</dl>
+</div>
+
+<h3 id="b2">B2 · Tests that define the contract</h3>
+<p class="note">Write these before the implementations.</p>
+<ol>
+<li><strong>Reference:</strong> orthonormality; variance per mode; <code>h_norm2</code> of a sample is <code>O(r)</code>, of <code>sample/√λ</code> is <code>O(Σ1/λ)</code> — the Ex. 2.1 / 2.2 point.</li>
+<li><strong>Transport.push:</strong> <code>logw</code> vs autograd <code>slogdet</code> + H-terms, per layer / per ODE step, <code>r = 30</code>, <code>M = 10</code>.</li>
+<li><strong>Transport.pull:</strong> round-trip error; for <code>Composite</code> planar / Sylvester compare fixed-point vs Newton inversion; for <code>ODEFlow</code> compare <code>pull(push(a))</code> at several <code>n_steps</code>.</li>
+<li><strong>Euler-ODE ≡ Composite:</strong> an <code>ODEFlow</code> with Euler and <code>n_steps = N</code> must produce identical <code>(f(a), logw)</code> to a <code>Composite</code> of <code>N</code> layers <code>I + (T/N)h(·, t_n)</code> with <code>logdet = ln det(I + (T/N)Dh)</code>. Then show <code>logw</code> converges as <code>N → ∞</code> (Supp Thm 2 numerically).</li>
+<li><strong>Affine / Gaussian ground truth:</strong> one projected layer with analytic <code>R, b</code> ⇒ <code>ReverseKL</code> loss at its floor and zero gradient; <code>NLL</code> on Gaussian data ⇒ minimum equals closed form.</li>
+<li><strong>Discretisation invariance:</strong> the same trained transport rendered on grids <code>{50, 100, 300}</code> gives identical coefficient statistics and converging grid statistics.</li>
+<li><strong>Sampler:</strong> pCN on the linear-Gaussian problem reproduces the closed-form posterior; <code>SplitPCN</code> with <code>W ≡ 0</code> reduces to pCN.</li>
+</ol>
+
+<h3 id="b3">B3 · Extension points to leave open</h3>
+<ul>
+<li><code>Layer.modes</code> as an arbitrary index set (not just <code>0..M-1</code>) so you can test which modes need transporting.</li>
+<li><code>Reference.lam</code> as a free vector so you can inject non-<code>(I−αΔ)^{-2}</code> spectra, or a learned / estimated spectrum.</li>
+<li><code>Transport</code> composable: <code>Composite([ODEFlow(...), SylvesterLayer(...)])</code> should just work (P2 §3.5 hints at hybrids).</li>
+<li><code>Potential</code> composable so <code>Φ − W_θ</code> is one object (P2 eq. 8).</li>
+<li><code>Objective</code> takes a <code>Transport</code>, never a specific class.</li>
+</ul>
+</section>
+
+<!-- ============================ C ============================ -->
+<section id="c">
+<h2><span class="letter">C</span>Roadmap</h2>
+<p class="note">Each step: <em>do</em> → <em>done when</em>. Checkboxes are saved in this browser only.</p>
+
+<div class="phase">
+<h4>Phase 0 — Theory (prompts T1–T5)</h4>
+<ul class="steps">
+<li><input type="checkbox" id="s0-1"><span class="id">0.1</span><label for="s0-1"><span class="do">Sequence-space picture of <code>μ₀</code>; H-norm; why shifts and scalings are singular.</span><span class="done">you can state Cameron–Martin and Feldman–Hájek with the ℓ²-condition on <code>(m_i/√λ_i)</code> and on <code>(σ_i − 1)</code>.</span></label></li>
+<li><input type="checkbox" id="s0-2"><span class="id">0.2</span><label for="s0-2"><span class="do">Derive the RN derivative for <code>I + F</code> yourself; check on <code>R¹</code>.</span><span class="done">your <code>A, B</code> in <code>exp(A‖F‖² + B⟨u,F⟩)</code> agree with the Supp Lemma-1 proof and you've explained the sign typo in the main texts (P1 Thm 2.3; P2 Thm 5's <code>T = u − f</code>).</span></label></li>
+<li><input type="checkbox" id="s0-3"><span class="id">0.3</span><label for="s0-3"><span class="do">Continuous limit: instantaneous change of variables; why <code>−∫Tr Dh</code> replaces <code>−Σ ln det</code>.</span><span class="done">you can reproduce the Supp Thm-5 proof sketch (p.4–6) in your own words, including where the dominating function <code>g(u) = C₂ exp(C₃‖u‖)</code> comes from.</span></label></li>
+<li><input type="checkbox" id="s0-4"><span class="id">0.4</span><label for="s0-4"><span class="do">Per-layer determinants and constraints (four discrete layers + planar-sum ODE field).</span><span class="done">the table in G matches your derivations.</span></label></li>
+</ul>
+</div>
+
+<div class="phase">
+<h4>Phase 1 — Reference + forward models</h4>
+<ul class="steps">
+<li><input type="checkbox" id="s1-1"><span class="id">1.1</span><label for="s1-1"><span class="do"><code>Reference</code> for 1-D Neumann.</span><span class="done">test B2.1 passes.</span></label></li>
+<li><input type="checkbox" id="s1-2"><span class="id">1.2</span><label for="s1-2"><span class="do">Generic numeric <code>Reference</code> from <code>(K, M)</code> matrices (2-D / periodic / custom BC).</span><span class="done">it agrees with 1.1 on the same problem.</span></label></li>
+<li><input type="checkbox" id="s1-3"><span class="id">1.3</span><label for="s1-3"><span class="do">Linear forward model (P1 eq. 4.1 / P2 eq. 14) as one precomputed matrix on coefficients; nonlinear 1-D Darcy; heat-conduction time-series model (P2 §5.3) as a third, since it stresses "obs points = time instants".</span><span class="done">finite-difference gradients match autograd; linear model matches an analytic solution.</span></label></li>
+<li><input type="checkbox" id="s1-4"><span class="id">1.4</span><label for="s1-4"><span class="do">Noise rule and fine-grid data generation.</span><span class="done"><code>τ</code> is recorded explicitly in outputs.</span></label></li>
+</ul>
+</div>
+
+<div class="phase">
+<h4>Phase 2 — Discrete transports (P1)</h4>
+<ul class="steps">
+<li><input type="checkbox" id="s2-1"><span class="id">2.1</span><label for="s2-1"><span class="do"><code>Layer</code> base + Householder.</span><span class="done">test B2.2 passes.</span></label></li>
+<li><input type="checkbox" id="s2-2"><span class="id">2.2</span><label for="s2-2"><span class="do">Projected; Planar; Sylvester (both <code>R</code> upper-triangular — see G / Q4).</span><span class="done">B2.2 passes for all four.</span></label></li>
+<li><input type="checkbox" id="s2-3"><span class="id">2.3</span><label for="s2-3"><span class="do"><code>Composite</code>; <code>pull</code> via fixed-point (planar / Sylvester) and exact solve (Householder / projected).</span><span class="done">test B2.3 passes.</span></label></li>
+<li><input type="checkbox" id="s2-4"><span class="id">2.4</span><label for="s2-4"><span class="do">Knob-sweep harness: <code>N ∈ {1,2,5,10,24}</code>, <code>M ∈ {5,10,20}</code>, <code>r ∈ {20,50}</code>, scaling exponent <code>p ∈ {0, ½, 1}</code>.</span><span class="done">one config dict drives every combination.</span></label></li>
+</ul>
+</div>
+
+<div class="phase">
+<h4>Phase 3 — Reverse-KL VI (P1 Alg. 1)</h4>
+<ul class="steps">
+<li><input type="checkbox" id="s3-1"><span class="id">3.1</span><label for="s3-1"><span class="do"><code>ReverseKL</code> objective, logging the three terms separately.</span><span class="done">loss components are visible per step.</span></label></li>
+<li><input type="checkbox" id="s3-2"><span class="id">3.2</span><label for="s3-2"><span class="do">Test B2.5 (analytic projected layer). Do this before any training.</span><span class="done">loss at floor, gradient ≈ 0.</span></label></li>
+<li><input type="checkbox" id="s3-3"><span class="id">3.3</span><label for="s3-3"><span class="do">Train the linear problem with each layer type.</span><span class="done">loss-floor gap vs <code>N</code> is recorded.</span></label></li>
+<li><input type="checkbox" id="s3-4"><span class="id">3.4</span><label for="s3-4"><span class="do">pCN baseline; error tables (P1 p.23); discretisation table (P1 Tab. 2/3).</span><span class="done">tables reproduce qualitatively.</span></label></li>
+<li><input type="checkbox" id="s3-5"><span class="id">3.5</span><label for="s3-5"><span class="do">Nonlinear problem; Sylvester vs planar vs <code>N</code>.</span><span class="done">P1 Fig. 8-style comparison exists.</span></label></li>
+</ul>
+</div>
+
+<div class="phase">
+<h4>Phase 4 — Continuous transports (P2)</h4>
+<ul class="steps">
+<li><input type="checkbox" id="s4-1"><span class="id">4.1</span><label for="s4-1"><span class="do"><code>VectorField</code> interface; planar-sum field with time-MLP (P2 eq. 12–13: <code>M = 20</code>, <code>L = 12</code>, 3×12 tanh).</span><span class="done">analytic trace matches autograd trace.</span></label></li>
+<li><input type="checkbox" id="s4-2"><span class="id">4.2</span><label for="s4-2"><span class="do"><code>ODEFlow</code> with Euler; test B2.4 against <code>Composite</code>. Then RK4; then adaptive (optional).</span><span class="done">B2.4 passes; <code>logw</code> converges in <code>n_steps</code>.</span></label></li>
+<li><input type="checkbox" id="s4-3"><span class="id">4.3</span><label for="s4-3"><span class="do"><code>log_rn_at</code> via backward solve (Supp Thm 2.1).</span><span class="done"><code>log_rn_at(push(a)[0]) ≈ push(a)[1]</code>.</span></label></li>
+<li><input type="checkbox" id="s4-4"><span class="id">4.4</span><label for="s4-4"><span class="do">Use <code>ODEFlow</code> inside <code>ReverseKL</code> on the Phase-3 problems.</span><span class="done">you can say whether a continuous planar flow beats 32 discrete planar layers at equal parameter count.</span></label></li>
+</ul>
+</div>
+
+<div class="phase">
+<h4>Phase 5 — Learned priors (P2)</h4>
+<ul class="steps">
+<li><input type="checkbox" id="s5-1"><span class="id">5.1</span><label for="s5-1"><span class="do">Direct-data <code>NLL</code>; datasets from P2 §5.1 / §5.3 (they are Gaussian — see T7 / Q17).</span><span class="done">training runs on a P2-style dataset.</span></label></li>
+<li><input type="checkbox" id="s5-2"><span class="id">5.2</span><label for="s5-2"><span class="do">Closed-form check: NLL optimum on Gaussian data = KL between Gaussians in <code>R^r</code>.</span><span class="done">trained NLL reaches the closed-form value.</span></label></li>
+<li><input type="checkbox" id="s5-3"><span class="id">5.3</span><label for="s5-3"><span class="do"><code>LearnedPrior</code> potential; pCN with <code>Φ − W_θ</code>; reproduce P2 Fig. 2/6 qualitatively.</span><span class="done">sparse observations → learned prior fixes the unobserved region.</span></label></li>
+<li><input type="checkbox" id="s5-4"><span class="id">5.4</span><label for="s5-4"><span class="do"><code>SplitPCN</code> (Supp §2.4).</span><span class="done">acceptance vs β vs <code>k</code> measured.</span></label></li>
+<li><input type="checkbox" id="s5-5"><span class="id">5.5</span><label for="s5-5"><span class="do">Indirect data: Sinkhorn objective (existing OT implementation or a short log-domain Sinkhorn); P2 Alg. 2.</span><span class="done">a prior is learned from observations only.</span></label></li>
+<li><input type="checkbox" id="s5-6"><span class="id">5.6</span><label for="s5-6"><span class="do">Optional: SMC-GM.</span><span class="done">matches pCN on the linear problem.</span></label></li>
+</ul>
+</div>
+
+<div class="phase">
+<h4>Phase 6 — Conditional / amortised</h4>
+<ul class="steps">
+<li><input type="checkbox" id="s6-1"><span class="id">6.1</span><label for="s6-1"><span class="do">Encoder <code>W(x,d)</code> (P1 p.18–19) and standardisation.</span><span class="done">encoder handles variable observation counts.</span></label></li>
+<li><input type="checkbox" id="s6-2"><span class="id">6.2</span><label for="s6-2"><span class="do">Hypernet → <code>Composite</code> params; P1 Alg. 2; fine-tune.</span><span class="done">fine-tune from hypernet init converges faster than random init.</span></label></li>
+<li><input type="checkbox" id="s6-3"><span class="id">6.3</span><label for="s6-3"><span class="do">Same hypernet driving an <code>ODEFlow</code>'s time-net (novel; optional).</span><span class="done">runs; compared to 6.2.</span></label></li>
+</ul>
+</div>
+
+<div class="phase">
+<h4>Phase 7 — Experiments you actually want</h4>
+<ul class="steps">
+<li><input type="checkbox" id="s7-1"><span class="id">7.1</span><label for="s7-1"><span class="do">Layers <code>N</code> vs KL floor.</span><span class="done">one plot.</span></label></li>
+<li><input type="checkbox" id="s7-2"><span class="id">7.2</span><label for="s7-2"><span class="do">Modes <code>M</code> vs posterior accuracy in unobserved regions.</span><span class="done">one plot.</span></label></li>
+<li><input type="checkbox" id="s7-3"><span class="id">7.3</span><label for="s7-3"><span class="do">Spectral exponent <code>s</code> / <code>α</code> of <code>μ₀</code> vs learned-prior quality.</span><span class="done">one plot.</span></label></li>
+<li><input type="checkbox" id="s7-4"><span class="id">7.4</span><label for="s7-4"><span class="do">Parameter scaling <code>p</code>.</span><span class="done">one plot.</span></label></li>
+<li><input type="checkbox" id="s7-5"><span class="id">7.5</span><label for="s7-5"><span class="do">Discrete vs continuous at equal cost.</span><span class="done">one plot.</span></label></li>
+<li><input type="checkbox" id="s7-6"><span class="id">7.6</span><label for="s7-6"><span class="do">Which modes matter (<code>Layer.modes</code> sweeps).</span><span class="done">one plot.</span></label></li>
+</ul>
+</div>
+</section>
+
+<!-- ============================ D ============================ -->
+<section id="d">
+<h2><span class="letter">D</span>Theory prompts</h2>
+<p class="note">Paste one per turn; attach P1, P2, Supp. Ask for derivations, not code. Use the copy button to grab the prompt text.</p>
+
+<div class="prompt has-copy"><div class="ptitle"><strong>T1 — Gaussian measures on Hilbert space, concretely</strong><span class="tag">theory</span></div><button class="copy" type="button">Copy</button>
+<div class="body">
+<p>Let <code>μ₀ = N(0, C₀)</code> on a separable Hilbert space with <code>C₀</code> trace-class, eigenpairs <code>(λ_i, φ_i)</code>. (a) Show <code>μ₀</code> is the law of <code>Σ √λ_i ξ_i φ_i</code>, <code>ξ_i</code> iid <code>N(0,1)</code>, and why trace-class is exactly what makes the series converge in <code>L²(Ω; H_u)</code>. (b) Define the Cameron–Martin space <code>H = C₀^{1/2}(H_u)</code> with norm <code>‖u‖²_H = Σ u_i²/λ_i</code>; show <code>μ₀(H) = 0</code>. (c) State the Cameron–Martin theorem (Bogachev, <em>Gaussian Measures</em>, Thm 2.4.5 — verify the numbering) and derive the RN derivative of the shift <code>u ↦ u + m</code> for <code>m ∈ H</code>, including what <code>⟨m, u⟩_H</code> means for <code>u ∉ H</code> (the extended pairing / white-noise map). (d) State Feldman–Hájek (Bogachev Thm 2.7.2 — verify) and use the product-measure form (Kakutani's criterion) to show <code>u ↦ 2u</code> yields a singular measure, and more generally <code>u ↦ Σ σ_i u_i φ_i</code> is equivalent to <code>μ₀</code> iff <code>Σ (σ_i² − 1)² &lt; ∞</code>. (e) Conclude: which perturbations <code>F</code> can a "functional flow" ever use, and why finite rank into <code>H</code> (P1 Thm 2.3) is a sufficient, sledgehammer condition.</p>
+</div></div>
+
+<div class="prompt has-copy"><div class="ptitle"><strong>T2 — RN derivative of a nonlinear perturbation of the identity</strong><span class="tag">theory</span></div><button class="copy" type="button">Copy</button>
+<div class="body">
+<p>Setting: <code>f(u) = u + F(u)</code>, <code>F: H_u → H</code> with finite-dimensional range, <code>Df</code> bijective. (a) In <code>R^r</code> with <code>μ₀ = N(0, Λ)</code>, derive <code>d(f_#μ₀)/dμ₀</code> at the point <code>f(u)</code> via change of variables; write it as <code>|det J_f(u)|⁻¹ exp(A‖F(u)‖²_H + B⟨u, F(u)⟩_H)</code> and determine <code>A, B</code>. (b) Verify on <code>r = 1</code>, <code>f(u) = u + c</code>: the pushforward is <code>N(c, 1)</code>. (c) Read Supp §1.2 (proof of Lemma 1, Step 3, <code>Λ_F(u)</code>), and the P1 Thm 2.3 / P2 Thm 5 main-text statements. Identify precisely where the main texts' <code>⟨u, u − f(u)⟩</code> (equivalently <code>T = u − f</code>) contradicts the supplement's <code>⟨u, F⟩</code> with <code>F = f − u</code>, and which is correct. (d) Explain what <code>det₂</code> (regularised Fredholm–Carleman, Supp Def. 2) is, why the supplement passes through <code>det₂</code> and <code>tr DF</code> and then back to <code>det₁</code>, and why for finite-rank <code>F</code> all three determinants are the same finite determinant (Bogachev §6.4, Thm 6.6.7 / Cor 6.6.8 as cited). (e) Show the composite formula for <code>N</code> layers by the chain rule, and explain why the <code>H</code>-terms only involve the <em>total</em> displacement <code>F = f(u) − u</code> while the determinant terms are per layer.</p>
+</div></div>
+
+<div class="prompt has-copy"><div class="ptitle"><strong>T3 — From discrete layers to an ODE flow</strong><span class="tag">theory</span></div><button class="copy" type="button">Copy</button>
+<div class="body">
+<p>(a) Show that Euler with step <code>τ = T/N</code> applied to <code>dv/dt = h(v,t)</code> produces a P1-type composite <code>Π(I + τ h(·, t_n))</code>. (b) Using <code>ln det(I + τA) = τ tr A + O(τ²‖A‖₁²)</code> for trace-class <code>A</code>, show the log-det sum tends to <code>∫₀ᵀ Tr Dh(v(t),t) dt</code> (the "instantaneous change of variables", Chen et al. 2018, Thm 1 — verify), giving P2 Thm 5. (c) Reproduce the structure of the Supp Thm-5 proof: which of the four conditions in Def. 4 is used for which bound (<code>C₀⁻¹h</code> bounded ⇒ <code>‖T_θ^N‖_H</code> and <code>⟨u, T⟩</code> bounded; <code>‖Dh‖₁</code> bounded ⇒ trace term bounded; Lipschitz ⇒ existence), and why the dominating function <code>g(u) = C₂ exp(C₃‖u‖_{H_u})</code> is <code>μ₀</code>-integrable (Fernique). (d) Why is <code>‖C₀⁻¹ h‖_{H_u} &lt; ∞</code> a <em>stronger</em> requirement than <code>h ∈ H</code>? In coefficient space, what does it say about the decay of the coefficients of <code>h</code>? Relate to the parameter scaling <code>u_n = Σ λ_i^p α_i φ_i</code>: which <code>p</code> gives <code>u_n ∈ H_u</code>, <code>∈ H</code>, <code>∈ range(C₀)</code>? (e) Supp Thm 2.1: explain why evaluating <code>W_θ(u)</code> at an arbitrary <code>u</code> needs only one backward ODE solve, and what the trace integral is integrated along.</p>
+</div></div>
+
+<div class="prompt has-copy"><div class="ptitle"><strong>T4 — Determinants and constraints, layer by layer</strong><span class="tag">theory</span></div><button class="copy" type="button">Copy</button>
+<div class="body">
+<p>Work in coefficient space with an orthonormal eigenbasis; a layer touches only coordinates in an index set <code>S</code>, <code>|S| = M</code>. For each of: Householder <code>u − ½ v(⟨v,u⟩ + b)</code>, <code>‖v‖ = 1</code>; projected <code>u + Q R (P u + b)</code>; planar <code>u + u_n tanh(⟨w_n,u⟩ + b)</code>; Sylvester <code>u + A tanh(B u + b)</code>; and the P2 planar-sum vector field <code>h = Σ_{i≤L} u_i σ(⟨v, w_i⟩ + b_i)</code>:</p>
+<p>(a) write <code>DF</code> as a finite-rank operator and use Sylvester's identity <code>det(I + AB) = det(I_M + BA)</code> (P1 Thm 2.8) to reduce <code>det₁</code> to an <code>M×M</code> or scalar determinant; for the ODE field write <code>Tr Dh</code> in closed form. (b) State the spectral condition (eigenvalues of <code>DF</code> not in <code>(−∞, −1]</code>) as an explicit inequality on parameters and give the paper's reparameterisation that enforces it (P1 eqs. 2.7, 2.12–2.13; triangular <code>R</code> with bounded diagonal). (c) Householder: prove <code>det = ½</code> is constant and discuss what this does to the gradient and to expressivity (why P1 needed 24 layers). (d) Sylvester: P1 p.13 says <code>R_B</code> upper-, <code>R_A</code> lower-triangular; the code uses both upper. Which choice makes <code>diag(h') R_B R_A</code> triangular so <code>det = Π(1 + h'_i (R_B R_A)_{ii})</code>? (e) For a <em>generic</em> <code>F</code> restricted to <code>S</code> (e.g. an MLP), what is the cheapest exact <code>logdet</code> and when would Hutchinson's estimator be preferable?</p>
+</div></div>
+
+<div class="prompt has-copy"><div class="ptitle"><strong>T5 — Losses and their estimators</strong><span class="tag">theory</span></div><button class="copy" type="button">Copy</button>
+<div class="body">
+<p>(a) Reverse KL: expand <code>D_KL(f_#μ₀ ‖ μ)</code> with <code>dμ/dμ₀ = e^{−Φ}/Z</code> into <code>E_{u~μ₀}[ logw(u) + Φ(f(u)) ] + ln Z</code>; identify constant terms; explain mode-seeking and its consequences for posterior credible intervals. (b) Forward NLL (P2 §3.3): <code>−E_{data} ln dμ_f/dμ₀(u)</code>; explain Remark 6 (independence of reference measure) and why this needs <code>f⁻¹</code>. When is reverse KL preferable to forward NLL and vice-versa? (c) Sinkhorn (P2 §3.4): define entropic OT <code>W²_α</code>, why it is differentiable and biased, and why the loss is between <code>ν</code> and <code>η * (SG)_# μ_f</code> (noise convolution) — what happens if you forget to add noise to simulated observations? (d) Monte-Carlo variance: reparameterised gradient of (a) with <code>N</code> samples; argue why <code>N = 30</code> can suffice for <code>θ</code> with ~10⁴ parameters but the <em>loss value</em> is noisy; propose a control variate. (e) Amortised (P1 Alg. 2): write the objective as an expectation over <code>(x, d)</code> and explain the bias introduced by a finite hypernet capacity; why fine-tuning removes it.</p>
+</div></div>
+
+<div class="prompt has-copy"><div class="ptitle"><strong>T6 — Discretisation invariance and what breaks it</strong><span class="tag">theory</span></div><button class="copy" type="button">Copy</button>
+<div class="body">
+<p>(a) Restate P1 Defs 2.1–2.4 and Thm 2.9 in coefficient-space terms. (b) Show an implementation storing parameters as eigen-coefficients and evaluating <code>φ_i</code> on the target grid satisfies Def. 2.4, and identify the only grid-dependent objects (forward model, quadrature for <code>from_grid</code>). (c) Show P1 eq. 2.16–2.17 (grid-vector parameters) fails. (d) Quantify the error of using interpolated continuous eigenfunctions on a coarse P1 mesh (P1 code <code>generate_eig.py</code>) vs discrete eigenvectors of <code>M⁻¹K</code>: is <code>ΨᵀKM⁻¹KΨ</code> diagonal? (e) For the ODE flow: is invariance preserved by the integrator? Which of <code>{integrator, n_steps, T}</code> are "model" and which are "numerics"?</p>
+</div></div>
+
+<div class="prompt has-copy"><div class="ptitle"><strong>T7 — Closed-form cases for unit tests</strong><span class="tag">theory</span></div><button class="copy" type="button">Copy</button>
+<div class="body">
+<p>(a) Linear-Gaussian VI: prior <code>N(0, Λ)</code>, <code>d = Ga + ε</code>; posterior mean / covariance; show one projected layer on all <code>r</code> coordinates is affine and solve for <code>(R, b)</code> reproducing the posterior exactly; pick the square root making <code>I + R</code> triangular with positive diagonal; compute the loss floor. (b) Gaussian direct data: show P2 §5.1's training family <code>cos 2πx + cos 4πx + 0.3 Σ_{k≤20} ξ_k cos(kπx)/(1+k)</code> <em>is</em> a Gaussian measure — write its mean and covariance in the eigenbasis of <code>μ₀</code> — and show it is equivalent to <code>μ₀</code> (finite-rank shift + finite-rank rescaling; use T1(d)). Same for §5.2's <code>ln((sin3θ+5)/3) + …</code> and §5.3's family. (c) Hence: an affine flow attains the NLL optimum on these datasets; compute that optimum (KL between Gaussians) as a test value. (d) Discuss what this implies about the <em>difficulty</em> of P2's experiments and what a genuinely non-Gaussian direct dataset would look like (e.g. level-set or mixture families).</p>
+</div></div>
+
+<div class="prompt has-copy"><div class="ptitle"><strong>T8 — Learned prior inside Bayes</strong><span class="tag">theory</span></div><button class="copy" type="button">Copy</button>
+<div class="body">
+<p>(a) Derive P2 eq. 8 from eq. 7 by the chain rule of RN derivatives. (b) Why does pCN with potential <code>Φ − W_θ</code> target the right posterior? Write the acceptance ratio (Supp Alg. 1). (c) Explain the splitting strategy S-pCN (Supp §2.4): why local <code>W</code>-only steps + a global <code>Φ</code>-acceptance is exact (detailed balance argument), and when it helps. (d) Well-posedness (P2 Thm 9): what is needed of <code>W_θ</code> and of the likelihood; where does the Fernique-type bound <code>exp(W_θ) ≤ C₁ exp(C₂‖u‖)</code> come from?</p>
+</div></div>
+
+<div class="prompt has-copy"><div class="ptitle"><strong>T9 — What do r, M, N, L, α, s actually control?</strong><span class="tag">theory</span></div><button class="copy" type="button">Copy</button>
+<div class="body">
+<p>For each knob give (i) the object it lives in, (ii) the theoretical role, (iii) what you'd expect to see when you sweep it, (iv) an experiment to test that expectation. Knobs: prior rank <code>r</code>; modes touched <code>M</code> (and <em>which</em> modes); number of layers <code>N</code> (discrete) / <code>T</code>, <code>n_steps</code> (ODE); number of planar terms <code>L</code>; <code>α</code> and exponent <code>s</code> in <code>C₀ = (I−αΔ)^{-s}</code>; parameter-scaling exponent <code>p</code>; samples per step; noise level <code>τ</code>. Distinguish "changes the family of measures" from "changes the optimisation".</p>
+</div></div>
+
+<div class="prompt has-copy"><div class="ptitle"><strong>T10 — Beyond the four layers</strong><span class="tag">theory</span></div><button class="copy" type="button">Copy</button>
+<div class="body">
+<p>Propose three new layer types that satisfy P1 Thm 2.3 / P2 Def. 4 with a closed-form or cheap <code>logdet</code> / trace: (i) coupling layer on a split of the mode set; (ii) rank-<code>M</code> "residual MLP" <code>u + Q g(Pu)</code> with <code>g</code> an MLP and autograd <code>M×M</code> Jacobian; (iii) a Householder-sum ODE field (Supp §4.2, eq. 4.5). For each: verify conditions, give the determinant, note the constraint you must enforce, and estimate cost vs <code>M</code>.</p>
+</div></div>
+</section>
+
+<!-- ============================ E ============================ -->
+<section id="e">
+<h2><span class="letter">E</span>Design prompts</h2>
+<p class="note">Open-ended; for <em>your</em> skeleton. These ask a model to review, specify, or critique — not to write the implementation.</p>
+
+<div class="prompt has-copy"><div class="ptitle"><strong>D1 — Interface review</strong><span class="tag">design</span></div><button class="copy" type="button">Copy</button>
+<div class="body"><p>Here are my interfaces (paste B1). Critique them against these use-cases: P1 VI with a Sylvester composite; P2 learned prior with an ODE planar-sum field and NLL; hybrid <code>Composite([ODEFlow, Layer])</code>; conditional hypernet; a user-defined layer with autograd <code>logdet</code>. Point out any method that forces a specific implementation, any missing invariant, and any knob that is not reachable through the config. Propose at most three changes.</p></div></div>
+
+<div class="prompt has-copy"><div class="ptitle"><strong>D2 — Test-first</strong><span class="tag">design</span></div><button class="copy" type="button">Copy</button>
+<div class="body"><p>Write <em>only</em> the test specifications (names, inputs, expected values, tolerances) for B2.1–B2.7, in the order they should pass. For each, say which interface it locks down and what failure mode it catches. No implementation code.</p></div></div>
+
+<div class="prompt has-copy"><div class="ptitle"><strong>D3 — Layer contract</strong><span class="tag">design</span></div><button class="copy" type="button">Copy</button>
+<div class="body"><p>Given <code>Layer{ F(a), logdet(a), constraint_penalty(), modes }</code>, write the docstring-level contract: shapes, dtype, which coordinates may change, when <code>logdet</code> may be computed by autograd fallback, how <code>pull</code> is discovered (attribute? method?). Give me a checklist for adding a new layer type.</p></div></div>
+
+<div class="prompt has-copy"><div class="ptitle"><strong>D4 — ODE flow contract</strong><span class="tag">design</span></div><button class="copy" type="button">Copy</button>
+<div class="body"><p>Same for <code>ODEFlow</code>: what <code>VectorField</code> must provide, how <code>(a, ∫Tr)</code> are integrated jointly, how <code>pull</code> reuses the integrator, how <code>log_rn_at</code> avoids two solves (Supp Thm 2.1), what happens with adaptive steppers and autograd (adjoint vs discretise-then-differentiate — recommend one for <code>r ≤ 50</code>).</p></div></div>
+
+<div class="prompt has-copy"><div class="ptitle"><strong>D5 — Objective contract</strong><span class="tag">design</span></div><button class="copy" type="button">Copy</button>
+<div class="body"><p>For <code>ReverseKL</code>, <code>NLL</code>, <code>Sinkhorn</code>, <code>Conditional</code>: inputs, what they require of <code>Transport</code> (<code>pull</code>? <code>log_rn_at</code>?), what they log, and the closed-form test case each must pass (T7).</p></div></div>
+
+<div class="prompt has-copy"><div class="ptitle"><strong>D6 — Knob inventory → config</strong><span class="tag">design</span></div><button class="copy" type="button">Copy</button>
+<div class="body"><p>Turn the B1 knob lists into a flat config schema with defaults taken from P1 §4.1 / 4.2 / 5.1 and P2 §5.1–5.3. Mark each knob as "model" (changes the measure family) or "numerics / optimisation".</p></div></div>
+
+<div class="prompt has-copy"><div class="ptitle"><strong>D7 — Minimal-code review</strong><span class="tag">design</span></div><button class="copy" type="button">Copy</button>
+<div class="body"><p>Here is my implementation of X. Review only for: contract violations, dtype (float64 vs float32 with <code>1e-15</code> epsilons), hidden grid-dependence, and places where I compute something in <code>R^{n_grid}</code> that should be in <code>R^r</code>. Do not rewrite; list issues with line references.</p></div></div>
+
+<div class="prompt has-copy"><div class="ptitle"><strong>D8 — Experiment planner</strong><span class="tag">design</span></div><button class="copy" type="button">Copy</button>
+<div class="body"><p>Given the knob config, design the sweep for Phase 7.x: which knobs, which values, which metric (KL floor gap, mean / cov error vs pCN, unobserved-region error, wall-clock), how many seeds, and the one plot that answers the question.</p></div></div>
+</section>
+
+<!-- ============================ F ============================ -->
+<section id="f">
+<h2><span class="letter">F</span>Audit questions</h2>
+<p class="note">P1 code ↔ papers, plus new ones for P2. Q1–Q16 from v2 still apply; their answers are in G.</p>
+<div class="qa">
+<p class="q"><b>Q3′ (resolved)</b>Which of P1 Thm 2.3, P2 Thm 5, and the Supp Lemma-1 proof carry the correct sign of the cross term? Which convention does <code>common_flows.py:167</code> implement?</p>
+<p class="q"><b>Q17</b>P2 §5.1 direct dataset: is it Gaussian? If yes, what is the minimal flow that represents it exactly, and what does Fig. 1(b) then demonstrate?</p>
+<p class="q"><b>Q18</b>P2 Thm 5 requires <code>sup ‖C₀⁻¹ h‖ &lt; ∞</code>. For the planar-sum field with <code>u_i(t) = Σ_{j≤M} α_i^{(j)}(t) φ_j</code>, is this automatic? What if <code>M → ∞</code> with <code>α</code> from an unbounded time-net?</p>
+<p class="q"><b>Q19</b>P2 uses <code>β = 0.05</code> for pCN under <code>μ₀</code> and <code>β = 0.02</code> under the learned prior (p.16) and 5×10⁷ iterations. Why is the learned-prior chain stiffer (Supp §2.4)? Would <code>SplitPCN</code> let you use <code>β = 0.05</code> again?</p>
+<p class="q"><b>Q20</b>Sinkhorn loss (P2 §3.4): what is being compared — distributions over <code>R^{N_d}</code> of observations. With <code>N = batch</code> simulated observations per step, what is the effective sample size of the entropic-OT estimate, and how does <code>α</code> (entropy weight) trade bias vs variance?</p>
+<p class="q"><b>Q21</b>If you Euler-discretise P2's planar-sum field with <code>n_steps = N</code>, each step is a <em>sum</em> of <code>L</code> planar perturbations, not a single planar layer. Is <code>I + τ Σ_i u_i σ'_i w_iᵀ</code> still cheap to <code>logdet</code>? (Hint: rank-<code>L</code> update; <code>det(I_L + τ B A)</code>.)</p>
+<p class="q"><b>Q22</b>Where in your skeleton does "the prior is <code>μ₀</code>" vs "the prior is <code>f_#μ₀</code>" get decided, and can the same <code>Transport</code> object play both roles without code duplication?</p>
+</div>
+
+<details>
+<summary>Q1–Q16 from v2 <span class="hint">(P1 code audit — collapsed so you can work them before peeking)</span></summary>
+<div class="inner qa">
+<p class="q"><b>Q1</b><code>common_flows.py:167</code> computes <code>flow_log_density = negtive_log_prior(z0) − log_jacobian</code> and <code>loss = mean(flow_log_density − exact_log_density(zk))</code>. Write the loss explicitly in <code>‖z0‖_H</code>, <code>‖zk‖_H</code>, <code>logdet</code>, <code>Φ(zk)</code>. Which term has the "wrong" sign relative to <code>ln q(zk) = ln p₀(z0) − logdet</code>? Does it matter for the gradient?</p>
+<p class="q"><b>Q2</b><code>prior.py:36</code> computes <code>½ uᵀ Kᵀ M⁻¹ K u</code>. Which norm is this? Why not <code>½ uᵀ M u</code>? For <code>u = Ψ a</code>, is <code>ΨᵀKᵀM⁻¹KΨ</code> diagonal with entries <code>1/λ_i</code>?</p>
+<p class="q"><b>Q3</b>The paper's exponent is <code>½⟨f(u)−u, f(u)−u⟩_H + ⟨u, u−f(u)⟩_H</code>. With <code>F = f(u)−u</code> that is <code>½‖F‖² − ⟨u,F⟩</code>. Does it agree with your T2 derivation? Which sign does the code use?</p>
+<p class="q"><b>Q4</b><code>common_flows.py:112–124</code>: <code>r1</code> (the <code>R_A</code> role) and <code>r2</code> (the <code>R_B</code> role) are <em>both</em> <code>triu</code>. Paper p.13 says <code>R_A</code> lower. Which is consistent with the log-det on lines 133–138? Why must the diagonal of <code>r1</code> be <code>&gt; −1</code> and the diagonal of <code>r2</code> be exactly 1?</p>
+<p class="q"><b>Q5</b>Paper §2.6 parameterises <code>u_n = Σ λ_i α_i φ_i</code>. <code>common_flows.py:40–47</code> uses <code>Ψ @ u</code> with no <code>λ</code>. Is the theory still satisfied? What does the <code>λ</code> scaling change — the function class or the optimisation landscape?</p>
+<p class="q"><b>Q6</b><code>common_flows.py:73</code> hard-codes <code>log_det = log(0.5)</code>. Derive why. What does it mean that 24 layers were needed in §4.1 vs 5 projected layers?</p>
+<p class="q"><b>Q7</b><code>common_flows.py:85–97</code>: <code>R = triu(R,1) + diag(tanh(d) + 1e-5)</code>, log-det <code>= Σ log(1 + diag)</code>. Range of the diagonal of <code>I + R</code>? Is the <code>1e-5</code> doing anything in float32? <code>self.h = Tanh()</code> is unused — bug?</p>
+<p class="q"><b>Q8</b>Given the 20-mode truncation: what is the "true posterior" being approximated — on <code>H_u</code> or on <code>span{φ_1..φ_20}</code>? Does the pCN comparison use the same truncation? What changes with the full sampler <code>K⁻¹ M^{1/2} ξ</code> still present in <code>probability.py</code>?</p>
+<p class="q"><b>Q9</b><code>pCN.py:35</code> builds the model with <code>d = d_clean</code>; the flow scripts use the noisy <code>d</code>. Effect on the "flow vs pCN" comparison?</p>
+<p class="q"><b>Q10</b><code>Conditional_data_generation.py:78</code> adds noise with <code>0.05·max|clean|</code>; <code>Conditional_Normalizing_Flows_sylvester.py:232</code> sets <code>τ⁻¹</code> from <code>0.05·max|noisy d|</code>. Same τ? Does it matter?</p>
+<p class="q"><b>Q11</b>Dead code / bugs: <code>Darcyflow_post.py:72–79</code> module-level <code>sample = []</code> — what happens on the second call? <code>retrain_sylveter.py:93–102</code> — does the NaN guard ever affect <code>loss.backward()</code>? <code>common_flows.py:158</code> — <code>scheduler.step()</code> before <code>optimizer.step()</code>?</p>
+<p class="q"><b>Q12</b>Training tricks not in the paper: grad clipping at 0.5, <code>weight_decay=1e-3</code> in retraining, loss clamp at 2×10⁵. Keep which, and how would you find out if they matter?</p>
+<p class="q"><b>Q13</b><code>Conditional_data_generation.py:117–121</code>: <code>adj = M⁻¹ Sᵀ d</code>, <code>v = Ψᵀ M adj</code>. Simplify <code>v</code>. Why the <code>/400</code>? Why the standardisation?</p>
+<p class="q"><b>Q14</b><code>Conditional_Normalizing_Flows_sylvester.py:55–77</code>: four 5-layer tanh MLPs per flow layer, final <code>tanh</code>. What does the final <code>tanh</code> do to <code>R1</code>'s range? Parameter count for 5 layers? Is <code>Train_conditional</code> using Alg. 2's <code>M = 10</code>, <code>N_u = 20</code>? How many gradient steps is "10 epochs over 5000 pairs"?</p>
+<p class="q"><b>Q15</b><code>sylvester_get_initial.py</code> + <code>retrain_sylveter.py</code>: what exactly is copied from the hypernet (which tensors, pre- or post-constraint)? Why is <code>init_value_dia</code> stored pre-<code>tanh</code>?</p>
+<p class="q"><b>Q16</b><code>generate_eig.py:13–22</code> picks <code>(i, j)</code> with the 20 smallest <code>i²+j²</code>; <code>probability.py:112</code> uses <code>1/(a + α(i²+j²)π²)</code> as the sampling std. Is that <code>λ_i^{1/2}</code> for <code>C₀ = (I − αΔ)⁻²</code>? Do ties in <code>i²+j²</code> matter?</p>
+</div>
+</details>
+</section>
+
+<!-- ============================ G ============================ -->
+<section id="g">
+<h2><span class="letter">G</span>Answer key &amp; references</h2>
+<p class="note">Verify each yourself before trusting it.</p>
+
+<details>
+<summary>Answer key <span class="hint">(open after you've attempted F)</span></summary>
+<div class="inner">
+<h4>Sign (Q3 / Q3′)</h4>
+<p>Correct: <code>ln dμ_f/dμ₀ (f(u)) = −ln|det₁ Df(u)| + ½‖F‖²_H + ⟨u, F⟩_H</code>, <code>F = f(u) − u</code>. Sources: Supp §1.2 Step 3, <code>Λ_F(u) = |det₁| exp(−⟨u,F⟩ − ½‖F‖²)</code>, RN = <code>1/Λ_F</code>; <code>R¹</code> shift check gives <code>exp(cu + c²/2)</code>. P1 Thm 2.3 (<code>⟨u, u − f(u)⟩</code>) and P2 Thm 5 (<code>T_θ = u − f_θ(u)</code>) have the sign flipped; the supplement's <code>N &gt; 1</code> case even says "Recall <code>T(u) = f(u) − u</code>". <code>common_flows.py:167</code> implements <code>½‖z_k‖² − ½‖z_0‖² = ½‖F‖² + ⟨z_0, F⟩</code> — correct. The <code>+½‖z_0‖²</code> in the reported value is a θ-independent constant with the wrong sign; gradients are unaffected.</p>
+<h4>Per-layer determinants</h4>
+<ul>
+<li><strong>Householder:</strong> <code>det(I − ½vvᵀ) = 1 − ½‖v‖² = ½</code>; zero gradient from the log-det; rank-1 affine ⇒ many layers needed.</li>
+<li><strong>Projected:</strong> <code>det(I_M + R)</code>; the code's <code>R = triu + diag(tanh + ε)</code> gives <code>diag(I+R) ∈ (ε, 2]</code>. Unused <code>tanh</code> is not a bug — the layer is meant to be linear.</li>
+<li><strong>Planar / planar-sum:</strong> <code>1 + σ'⟨u_n, w_n⟩</code>; for the sum, <code>Tr Dh = Σ_i σ'_i ⟨u_i, w_i⟩</code> (Supp §4.1 Parts 1–3).</li>
+<li><strong>Sylvester (Q4):</strong> both upper-triangular ⇒ <code>R_B R_A</code> upper-triangular with diagonal <code>diag(R_A)</code> (since <code>diag(R_B) = 1</code>) ⇒ <code>logdet = Σ ln(1 + h'_i diag(R_A)_i)</code>; matches <code>common_flows.py:133–138</code>. P1 p.13's "<code>R_A</code> lower-triangular" is inconsistent with its own determinant claim. Same trick for Q21 with an <code>L×L</code> determinant: <code>det(I + τ U diag(σ') Wᵀ) = det(I_L + τ diag(σ') Wᵀ U)</code>.</li>
+</ul>
+<h4>Other v2 answers</h4>
+<ul>
+<li><strong>Q2:</strong> <code>uᵀKᵀM⁻¹Ku = ‖C₀^{-1/2}u‖²</code> in the FE discretisation of <code>C₀⁻¹ = (I−αΔ)²</code>. <code>ΨᵀKᵀM⁻¹KΨ</code> is only approximately <code>diag(1/λ)</code> because the columns of <code>Ψ</code> are interpolated continuous cosines, not discrete eigenvectors of <code>M⁻¹K</code>. In coefficient space it is exactly diagonal by construction.</li>
+<li><strong>Q5:</strong> <code>span{φ_1..φ_M} ⊂ H</code> since each <code>‖φ_i‖²_H = 1/λ_i &lt; ∞</code>. The <code>λ</code> scaling changes conditioning, not the function class.</li>
+<li><strong>Q8:</strong> target is the posterior restricted to the 20-mode subspace with the truncated prior; pCN uses the same truncation so the comparison is internally consistent, but neither approximates the full-space posterior beyond mode 20.</li>
+<li><strong>Q9:</strong> <code>pCN.py:35</code> uses <code>d_clean</code>; flow scripts use noisy <code>d</code>. Different posteriors. Use the same <code>d</code> and the same τ.</li>
+<li><strong>Q10:</strong> τ from <code>max|noisy d|</code> vs <code>max|clean d|</code> — a few % difference; make yours consistent.</li>
+<li><strong>Q11:</strong> global <code>sample</code> list grows across calls (returns <code>n·k</code> samples on the k-th call); the guard in <code>retrain_sylveter.py</code> never touches <code>loss</code>; <code>scheduler.step()</code> first skips the first lr value (harmless).</li>
+<li><strong>Q12:</strong> keep clipping optional; measure with/without on Darcy. Weight decay biases toward the identity map — not in the paper.</li>
+<li><strong>Q13:</strong> <code>v = Ψᵀ M (M⁻¹ Sᵀ d) = Ψᵀ Sᵀ d = (Σ_j d_j φ_i(x_j))_i</code>, exactly <code>W(x,d)</code> (P1 p.18–19). <code>/400</code> = number of obs points; redundant once standardised.</li>
+<li><strong>Q14:</strong> final <code>tanh</code> bounds <code>R1, R2</code> entries in <code>(−1,1)</code>. ≈ 10.4k parameters per flow layer, ≈ 52k for 5. Batch 10 × 20 samples matches Alg. 2; 10 epochs × 500 batches = 5000 steps (paper §5.1 says K = 5×10⁴).</li>
+<li><strong>Q15:</strong> pre-constraint tensors <code>R1_, R2_, dia1_, b_</code> are saved and become <code>nn.Parameter</code>s so the same constraint functions apply.</li>
+<li><strong>Q16:</strong> <code>σ_k = 1 + α(i²+j²)π²</code>, <code>λ = σ⁻²</code>, sampling std <code>= σ⁻¹</code> ✓. Ties are harmless for sampling but fix the ordering for reproducibility.</li>
+</ul>
+<h4>New (P2)</h4>
+<ul>
+<li><strong>Q17:</strong> Yes — Gaussian with mean <code>cos 2πx + cos 4πx</code> and diagonal covariance <code>0.09/(1+k)²</code> on cosine modes 1..20 (these are the Neumann eigenfunctions, so the covariance is diagonal in the <code>μ₀</code> basis). Equivalent to <code>μ₀</code> by T1(d). One affine layer suffices in principle; Fig. 1(b) demonstrates the trainer finds it, not expressivity.</li>
+<li><strong>Q18:</strong> automatic for fixed <code>M</code> (finite sum of eigenfunctions, <code>C₀⁻¹φ_j = λ_j⁻¹φ_j</code>), bound <code>L·M·C₁·C₂</code> (Supp eq. 4.3). Not automatic as <code>M → ∞</code> unless <code>α^{(j)}</code> decays like <code>λ_j</code> or faster (<code>p = 1</code> scaling).</li>
+<li><strong>Q19:</strong> <code>W_θ</code> varies sharply with <code>u</code> (Supp §2.4 p.10); local <code>W</code>-only steps decouple this from the expensive <code>Φ</code>.</li>
+<li><strong>Q21:</strong> <code>det(I + τ U diag(σ') Wᵀ) = det(I_L + τ diag(σ') Wᵀ U)</code> — an <code>L×L</code> determinant, cheap.</li>
+</ul>
+</div>
+</details>
+
+<div class="warnbox">One finding to keep in mind before Phase 5: all three of P2's direct-data training families are Gaussian measures equivalent to <code>μ₀</code>, so an affine flow attains the NLL optimum in closed form — a free unit test, and a caveat about what those experiments demonstrate.</div>
+
+<h3>References to verify numbering against</h3>
+<div class="refs">
+<p>Bogachev, <em>Gaussian Measures</em> (AMS 1998): Cameron–Martin formula (Thm 2.4.5), Feldman–Hájek / equivalence criterion (Thm 2.7.2), Fernique (Thm 2.8.5), nonlinear transformations &amp; Fredholm–Carleman determinants (Ch. 6, §6.4; Thm 6.6.7, Cor 6.6.8 as cited in Supp §1.2). Chen, Rubanova, Bettencourt, Duvenaud, <em>Neural ODEs</em>, NeurIPS 2018 (instantaneous change of variables, Thm 1). Grathwohl et al., <em>FFJORD</em>, ICLR 2019 (Hutchinson trace). Rezende &amp; Mohamed 2015 (planar flow); van den Berg et al. 2018 (Sylvester flows); Tomczak &amp; Welling 2016 (Householder flows). Dashti &amp; Stuart, <em>The Bayesian approach to inverse problems</em>, Handbook of UQ 2017 (pCN, well-posedness). Cotter, Roberts, Stuart, White, Stat. Sci. 2013 (pCN). Pinski, Simpson, Stuart, Weber, SIAM J. Sci. Comput. 2015 (KL approximation in infinite dimensions). Yao, Hu, Li, Inverse Problems 2016 (TV-Gaussian prior, splitting pCN). Feydy et al., AISTATS 2019 (Sinkhorn divergences). Latz, SIAM Rev. 2023 (well-posedness metrics).</p>
+<p><strong>P1 pages:</strong> Thm 2.3 p.7; KL p.8; Alg. 1 p.9; layers pp.9–13; Thm 2.8 p.13; eq. 2.16–2.17 p.15; λ-scaling p.17; <code>W(x,d)</code> pp.18–19; Alg. 2 p.20; settings pp.20–21 / 28 / 36. <strong>P2 pages:</strong> Def. 4 &amp; Thm 5 pp.6–7; eq. 7–8 p.8; Alg. 1 p.10; Alg. 2 p.11; eq. 12–13 &amp; hyperparameters pp.13–14; §5.1 pp.15–17; §5.2 pp.17–19; §5.3 pp.20–23. <strong>Supp:</strong> Defs 1–2 p.1; Lemma-1 proof pp.2–3; Thm-5 proof pp.4–6; pCN / SMC-GM / Thm 2.1 / S-pCN pp.7–11; planar-sum proof pp.12–14; other ODE fields p.14.</p>
+</div>
+</section>
+
+<footer>Functional Flows Roadmap · v3 · supersedes v1 / v2. Checkbox state is stored only in this browser.</footer>
+</main>
+</div>
+
+<script>
+(function(){
+  var KEY='ffr-v3-steps';
+  var boxes=Array.prototype.slice.call(document.querySelectorAll('.steps input[type=checkbox]'));
+  var state={};
+  try{state=JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(e){state={};}
+  function paint(){
+    var n=0;
+    boxes.forEach(function(b){
+      b.checked=!!state[b.id];
+      b.parentElement.classList.toggle('checked',b.checked);
+      if(b.checked)n++;
+    });
+    var c=document.getElementById('pcount'),bar=document.getElementById('pbar');
+    if(c)c.textContent=n+' / '+boxes.length;
+    if(bar)bar.style.width=(boxes.length?100*n/boxes.length:0)+'%';
+  }
+  boxes.forEach(function(b){
+    b.addEventListener('change',function(){
+      state[b.id]=b.checked;
+      try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}
+      paint();
+    });
+  });
+  var reset=document.getElementById('preset');
+  if(reset)reset.addEventListener('click',function(){
+    state={};
+    try{localStorage.removeItem(KEY);}catch(e){}
+    paint();
+  });
+  paint();
+
+  // copy buttons
+  document.querySelectorAll('.prompt .copy').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var box=btn.closest('.prompt');
+      var title=box.querySelector('.ptitle strong').textContent;
+      var body=box.querySelector('.body').innerText;
+      var text=title+'\n\n'+body;
+      function ok(){btn.textContent='Copied';btn.classList.add('done');setTimeout(function(){btn.textContent='Copy';btn.classList.remove('done');},1400);}
+      function fallback(){
+        var ta=document.createElement('textarea');ta.value=text;ta.setAttribute('readonly','');ta.style.position='fixed';ta.style.left='-9999px';
+        document.body.appendChild(ta);ta.select();
+        try{document.execCommand('copy');ok();}catch(e){btn.textContent='Select text';}
+        document.body.removeChild(ta);
+      }
+      if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(ok,fallback);}else{fallback();}
+    });
+  });
+
+  // active section in TOC
+  var links=Array.prototype.slice.call(document.querySelectorAll('nav.toc a'));
+  var secs=Array.prototype.slice.call(document.querySelectorAll('main section[id]'));
+  function setActive(){
+    var y=window.scrollY+120,cur=secs[0];
+    secs.forEach(function(s){if(s.offsetTop<=y)cur=s;});
+    links.forEach(function(a){a.classList.toggle('active',a.getAttribute('href')==='#'+cur.id);});
+  }
+  window.addEventListener('scroll',setActive,{passive:true});
+  setActive();
+})();
+</script>
+</body>
+</html>
