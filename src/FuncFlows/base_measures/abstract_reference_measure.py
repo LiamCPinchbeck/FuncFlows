@@ -1,17 +1,18 @@
 import torch
+from .bases import Basis
 
 
 class ReferenceMeasure:
     """Probability measure on coefficient vectors [..., num_functions] in the given basis."""
 
-    def __init__(self, basis, dtype=torch.float64):
+    def __init__(self, basis:type[Basis], dtype=torch.float64):
         self.basis = basis
         self.num_functions = basis.num_functions
         self.dtype = dtype
 
 
 
-    def sample(self, num_samples):
+    def sample(self, num_samples:int):
         """-> coeffs [num_samples, num_functions]"""
         raise NotImplementedError
 

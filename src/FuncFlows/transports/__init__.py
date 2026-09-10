@@ -1,1 +1,2 @@
 from .abstract_transformation import Transformation
+from .layers import DiscreteTransformation

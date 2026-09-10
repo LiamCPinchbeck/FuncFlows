@@ -6,7 +6,7 @@ from FuncFlows.base_measures import ReferenceMeasure
 
 class Transformation(torch.nn.Module):
 
-    def __init__(self, base_measure:ReferenceMeasure):
+    def __init__(self, base_measure:type[ReferenceMeasure]):
         super().__init__()
         self.base_measure = base_measure
 

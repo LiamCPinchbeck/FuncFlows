@@ -12,7 +12,7 @@ class Basis:
 
 
 
-    def __init__(self, num_functions, physical_dim=1, dtype=torch.float64):
+    def __init__(self, num_functions:int, physical_dim=1, dtype=torch.float64):
         self.num_functions = num_functions
         self.physical_dim = physical_dim
         self.dtype = dtype
@@ -49,7 +49,7 @@ class CosineBasis(Basis):
 
 
 
-    def __init__(self, num_functions, physical_dim=1, dtype=torch.float64):
+    def __init__(self, num_functions:int, physical_dim:int=1, dtype=torch.float64):
         super().__init__(num_functions, physical_dim, dtype=dtype)
 
 
@@ -88,7 +88,7 @@ class FourierBasis(Basis):
             dtype (optional): Data type. If you're reading this and don't know what that is. God help you. Defaults to torch.float64.
         """
 
-    def __init__(self, num_functions, physical_dim=1, dtype=torch.float64):
+    def __init__(self, num_functions:int, physical_dim=1, dtype=torch.float64):
 
         super().__init__(num_functions, physical_dim, dtype)
         modes = torch.cartesian_prod(*[torch.arange(2 * num_functions)] * physical_dim).reshape(-1, physical_dim)

@@ -1,12 +1,16 @@
 import torch
 
 from ..abstract_transformation import Transformation
+from .layer_classes import DiscreteLayer
+from FuncFlows.base_measures import ReferenceMeasure
 
 
 class DiscreteTransformation(Transformation):
     """A stack of DiscreteLayers. Pass either a list of layers, or a layer class + count + its kwargs."""
 
-    def __init__(self, base_measure, layers=None, layer_class=None, num_layers=1, **layer_kwargs):
+    def __init__(self, base_measure:type[ReferenceMeasure], 
+                 layers=None, layer_class:type[DiscreteLayer]=None, 
+                 num_layers:int=1, **layer_kwargs):
         super().__init__(base_measure)
         if layers is None:
             layers = [layer_class(base_measure, **layer_kwargs) for _ in range(num_layers)]
