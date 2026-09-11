@@ -10,7 +10,8 @@ setup(
         "torch",
         "torchvision",
         "pytest",
-        "matplotlib"
+        "matplotlib",
+        "tqdm"
         ],
     extras_require={"test": ["pytest"]},
 )

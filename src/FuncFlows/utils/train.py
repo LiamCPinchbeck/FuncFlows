@@ -1,5 +1,5 @@
 import torch
-
+from tqdm import trange
 # literally just the standard training loop except you feed in the objective
     # currently just ReverseKL which works via a class method i.e. you just call the thing
 def train(objective, parameters, num_steps=5000, learning_rate=0.01, decay=0.8, decay_every=500):
@@ -9,7 +9,7 @@ def train(objective, parameters, num_steps=5000, learning_rate=0.01, decay=0.8, 
 
 
     losses = []
-    for _ in range(num_steps):
+    for _ in trange(num_steps, desc='Training'):
         optimiser.zero_grad()
         loss = objective()
         loss.backward()
