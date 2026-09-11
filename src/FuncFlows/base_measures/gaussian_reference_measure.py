@@ -6,9 +6,9 @@ class GaussianReferenceMeasure(ReferenceMeasure):
     """N(0, C0) with C0 = (I - alpha Laplacian)^(-power), diagonal in the basis:
     variance_k = (1 + alpha * sigma_k)^(-power), sigma_k = basis.laplacian_eigenvalues[k]."""
 
-    def __init__(self, basis, alpha=0.1, power=2.0, dtype=torch.float64):
+    def __init__(self, basis, alpha=0.1, power=2.0, variances=None, dtype=torch.float64):
         super().__init__(basis, dtype)
-        self.variances = (1 + alpha * basis.laplacian_eigenvalues) ** (-power)
+        self.variances = (1 + alpha * basis.laplacian_eigenvalues) ** (-power) if variances is None else variances
         self.scale = self.variances.sqrt()
 
     def sample(self, num_samples):

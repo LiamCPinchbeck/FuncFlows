@@ -44,3 +44,48 @@ class HouseholderLayer(DiscreteLayer):
         head = coeffs_out[..., :self.num_modes]
         head = head + direction * (head @ direction + self.bias)[..., None]
         return torch.cat([head, coeffs_out[..., self.num_modes:]], dim=-1)
+
+
+
+class SylvesterLayer(DiscreteLayer):
+
+    def __init__(self, base_measure, num_modes, init_scale=0.1):
+        super().__init__(base_measure, num_modes)
+        dtype = base_measure.dtype
+        self.blo_inner = torch.nn.Parameter(init_scale * torch.randn(num_modes, num_modes, dtype=dtype))   # R_B
+        self.alo_outer = torch.nn.Parameter(init_scale * torch.randn(num_modes, num_modes, dtype=dtype))    # R_A
+        
+        self.diag_after_raw = torch.nn.Parameter(init_scale * torch.randn(num_modes, dtype=dtype))
+
+        self.bias = torch.nn.Parameter(torch.zeros(num_modes, dtype=dtype))
+        self.eye = torch.eye(num_modes, dtype=self.blo_inner.dtype)
+        
+    def matrices(self):
+        before = torch.triu(self.blo_inner, diagonal=1) + self.eye                                   # R_B
+        diag_after = torch.tanh(self.diag_after_raw)                                               # in (-1, 1)
+        after = torch.triu(self.alo_outer, diagonal=1) + torch.diag(diag_after)                  # R_A
+
+        return before, after, diag_after
+
+    def _map(self, coeffs):
+        before, after, diag_after = self.matrices()
+
+        head, tail = coeffs[..., :self.num_modes], coeffs[..., self.num_modes:]
+
+        hidden = torch.tanh(head @ before.T + self.bias)
+        head = head + hidden @ after.T
+
+        log_det = torch.log1p((1 - hidden ** 2) * diag_after).sum(-1)
+
+        return torch.cat([head, tail], dim=-1), log_det
+
+    def pull_back(self, coeffs_out, num_iterations=30):
+        before, after, _ = self.matrices()
+
+        head_out, tail = coeffs_out[..., :self.num_modes], coeffs_out[..., self.num_modes:]
+
+        head = head_out
+        for _ in range(num_iterations):
+            head = head_out - torch.tanh(head @ before.T + self.bias) @ after.T
+
+        return torch.cat([head, tail], dim=-1)
