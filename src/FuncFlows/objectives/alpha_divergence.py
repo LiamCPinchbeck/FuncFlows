@@ -21,6 +21,8 @@ class AlphaDivergence:
     """
 
     def __init__(self, transformation, potential, num_samples=30, alpha=2.0, context=None):
+        if alpha in (0.0, 1.0):
+            raise ValueError("alpha = 0 and alpha = 1 are the KL limits; use ReverseKL")
         self.transformation, self.potential, self.num_samples = transformation, potential, num_samples
         self.alpha, self.context = alpha, context
 
@@ -28,5 +30,9 @@ class AlphaDivergence:
         coeffs = self.transformation.base_measure.sample(self.num_samples)
         coeffs_out, log_rn_weight = self.transformation.push_forward(coeffs, self.context)
         log_weight = -self.potential(coeffs_out) - log_rn_weight      # log ptilde/q, up to log Z
+        # Renyi form: D_alpha = log E_q[w^alpha] / (alpha (alpha - 1)). The 1/(alpha - 1) factor
+        # matters: for 0 < alpha < 1, E_q[w^alpha] is MAXIMISED at q = p (Jensen, concave), so
+        # dividing by alpha alone would push the flow away from the posterior. For alpha = 2 this
+        # is the previous 1/2 log E[w^2], unchanged.
         return (torch.logsumexp(self.alpha * log_weight, 0)
-                - math.log(len(log_weight))) / self.alpha
+                - math.log(len(log_weight))) / (self.alpha * (self.alpha - 1))
