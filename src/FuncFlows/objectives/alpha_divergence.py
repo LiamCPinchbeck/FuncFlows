@@ -4,35 +4,64 @@ import torch
 
 
 class AlphaDivergence:
-    """Mass-covering alternative to reverse KL: minimise log E_q[w^alpha] / alpha, w = ptilde / q.
+    """Renyi / alpha divergence between the flow q and the posterior, as a mass-covering
+    alternative to reverse KL:
 
-    Reverse KL is mode-seeking -- it is finite only where q has mass, so a posterior mode that the
-    flow never visits costs nothing and is never found. The alpha = 2 divergence of FAB (Midgley
-    et al. 2023) is mass-covering instead: it is the variance of the importance weights, so it
-    punishes exactly the regions where q is too narrow.
+        D_alpha = log E_q[w^alpha] / (alpha (alpha - 1)),    w = ptilde / q.
 
-    This is FAB's divergence with its samples drawn from the flow by reparameterisation, NOT its
-    annealed-importance-sampling bootstrap. The divergence changes where the optimum sits; AIS is
-    what finds modes the flow has never sampled. Without it, a mode that the flow gives no mass at
-    all still contributes nothing, so run this as a wider-posterior objective rather than as a
-    mode-discovery one.
+    alpha = 2 is the chi^2 divergence of FAB (Midgley et al. 2023): the variance of the
+    importance weights, which punishes exactly the regions where q is too narrow. 0 < alpha < 1
+    sits between reverse KL (alpha -> 0) and the evidence (alpha -> 1 from below in the Li &
+    Turner 2016 convention). The 1/(alpha - 1) is essential: for 0 < alpha < 1 the expectation is
+    MAXIMISED at q = p, so dividing by alpha alone would push the flow away from the posterior.
 
-    log-sum-exp, so the weights never leave log space: w^2 overflows long before the fit is good.
+    Where the samples come from decides whether this is usable. Estimated with draws from q
+    alone, E_q[w^alpha] for alpha > 1 only sees where q already has mass, and the gradient can
+    make q ever narrower (log q -> infinity, w -> 0, loss -> -infinity) without the estimator
+    ever noticing the posterior mass it left behind -- the true quantity is bounded below by
+    Z^alpha, the estimate is not. FAB fixes this with AIS toward ptilde^alpha q^(1-alpha). The fix
+    here is simpler: a defensive mixture proposal r = (1 - f) q + f mu0, evaluated by importance
+    weights,
+
+        E_q[w^alpha] = E_r[ ptilde^alpha q^(1-alpha) / r ],
+
+    with everything written against the reference measure, so only log dq/dmu0 (the quantity the
+    flow already computes) and Phi appear. The prior half covers the whole posterior support, so
+    a q that collapses is caught by the prior draws it no longer covers. prior_fraction = 0 is
+    the plain q-sample estimator, kept for comparison; the default 0.5 is what to use.
+
+    log-sum-exp throughout, so the weights never leave log space.
     """
 
-    def __init__(self, transformation, potential, num_samples=30, alpha=2.0, context=None):
+    def __init__(self, transformation, potential, num_samples=30, alpha=2.0, context=None,
+                 prior_fraction=0.5):
         if alpha in (0.0, 1.0):
             raise ValueError("alpha = 0 and alpha = 1 are the KL limits; use ReverseKL")
         self.transformation, self.potential, self.num_samples = transformation, potential, num_samples
-        self.alpha, self.context = alpha, context
+        self.alpha, self.context, self.prior_fraction = alpha, context, prior_fraction
 
     def __call__(self):
-        coeffs = self.transformation.base_measure.sample(self.num_samples)
-        coeffs_out, log_rn_weight = self.transformation.push_forward(coeffs, self.context)
-        log_weight = -self.potential(coeffs_out) - log_rn_weight      # log ptilde/q, up to log Z
-        # Renyi form: D_alpha = log E_q[w^alpha] / (alpha (alpha - 1)). The 1/(alpha - 1) factor
-        # matters: for 0 < alpha < 1, E_q[w^alpha] is MAXIMISED at q = p (Jensen, concave), so
-        # dividing by alpha alone would push the flow away from the posterior. For alpha = 2 this
-        # is the previous 1/2 log E[w^2], unchanged.
-        return (torch.logsumexp(self.alpha * log_weight, 0)
-                - math.log(len(log_weight))) / (self.alpha * (self.alpha - 1))
+        flow, alpha = self.transformation, self.alpha
+        num_prior = int(round(self.prior_fraction * self.num_samples))
+        num_flow = self.num_samples - num_prior
+        points, log_ratio = [], []                              # log_ratio = log dq/dmu0 at the point
+        if num_flow:
+            coeffs_out, log_rn = flow.push_forward(flow.base_measure.sample(num_flow), self.context)
+            points.append(coeffs_out)
+            log_ratio.append(log_rn)
+        if num_prior:
+            prior_points = flow.base_measure.sample(num_prior)
+            points.append(prior_points)
+            log_ratio.append(flow.log_rn_at(prior_points, self.context))
+        points, log_ratio = torch.cat(points), torch.cat(log_ratio)
+        log_potential = -self.potential(points)
+        if num_prior == 0 or num_flow == 0:
+            # single proposal (q or mu0): log of the integrand relative to that proposal
+            log_proposal = log_ratio if num_prior == 0 else torch.zeros_like(log_ratio)
+        else:
+            fraction = num_prior / self.num_samples
+            log_proposal = torch.logaddexp(math.log(1 - fraction) + log_ratio,
+                                           torch.full_like(log_ratio, math.log(fraction)))
+        # ptilde^alpha q^(1-alpha) / r, all relative to mu0: alpha (-Phi) + (1 - alpha) log_ratio - log_proposal
+        log_terms = alpha * log_potential + (1 - alpha) * log_ratio - log_proposal
+        return (torch.logsumexp(log_terms, 0) - math.log(len(log_terms))) / (alpha * (alpha - 1))
