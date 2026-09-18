@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
  
 setup(
     name="FuncFlows",
-    version="0.0.1",
+    version="0.1.1",
     description="Normalizing flows on functional spaces",
     python_requires=">=3.10",
     packages=find_packages(),

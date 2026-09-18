@@ -58,3 +58,6 @@ class ContinuousTransformation(Transformation):
     def transport(self, coeffs, context=None):
         """Integrate the field only. No trace, no log-determinant — for sampling."""
         return self._integrate(coeffs, forward=True, context=context, with_trace=False)[0]
+
+
+
