@@ -3,4 +3,4 @@ from .vector_fields import (LinearField, MatrixField,
 from .base_continuous import ContinuousTransformation
 from .conditioners import (Conditioner, TimeBasisConditioner,
                            DataConditioner)
-# from.grid_fields import (PointwiseField, OperatorField, GridTransform)
+from.grid_fields import (PointwiseField, OperatorField, GridTransform)

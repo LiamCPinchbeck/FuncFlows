@@ -3,6 +3,7 @@ __pycache__/
 *.py[codz]
 *$py.class
 *.DS_STORE*
+TODO.md
 
 src/FuncFlows.egg-info*
 src/build
