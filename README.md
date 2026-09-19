@@ -1,4 +1,4 @@
-# FuncFlows
+# FuncyFlows
 
 Normalizing flows and flow matching on **function space**, for Bayesian inverse problems.
 
@@ -16,7 +16,7 @@ Based on [Functional Normalizing Flows](https://arxiv.org/abs/2411.13277) (P1) a
 ## Layout
 
 ```
-FuncFlows/
+FuncyFlows/
   base_measures/      bases, the reference measure
   transports/
     abstract_transformation.py    the Transformation interface
@@ -33,14 +33,14 @@ FuncFlows/
 
 ```python
 import torch
-from FuncFlows.base_measures.bases import FourierBasis
-from FuncFlows.base_measures.gaussian_reference_measure import GaussianReferenceMeasure
-from FuncFlows.transports.layers.base_discrete import DiscreteTransformation
-from FuncFlows.transports.layers.layer_classes import SylvesterLayer
-from FuncFlows.objectives.negative_logl import NegativeLogL
-from FuncFlows.objectives.reverse_kl import ReverseKL
-from FuncFlows.utils.gaussian_misfit import GaussianMisfit
-from FuncFlows.utils.train import train
+from FuncyFlows.base_measures.bases import FourierBasis
+from FuncyFlows.base_measures.gaussian_reference_measure import GaussianReferenceMeasure
+from FuncyFlows.transports.layers.base_discrete import DiscreteTransformation
+from FuncyFlows.transports.layers.layer_classes import SylvesterLayer
+from FuncyFlows.objectives.negative_logl import NegativeLogL
+from FuncyFlows.objectives.reverse_kl import ReverseKL
+from FuncyFlows.utils.gaussian_misfit import GaussianMisfit
+from FuncyFlows.utils.train import train
 
 NUM_MODES = 400
 basis = FourierBasis(NUM_MODES, physical_dim=2)
