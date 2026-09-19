@@ -6,6 +6,11 @@ The unknown is a function, represented by its coefficients in a fixed orthonorma
 
 Based on [Functional Normalizing Flows](https://arxiv.org/abs/2411.13277) (P1) and [Learning Informative Priors with infinite-dimensional continuous normalizing flow](https://arxiv.org/abs/2609.03343v1) (P2).
 
+
+## Full Documentation
+
+[Link](https://funcyflows.readthedocs.io/en/latest/)
+
 ---
 
 ## Layout
