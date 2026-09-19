@@ -3,7 +3,7 @@
 Normalizing flows and flow matching, but on **function spaces**. 
 
 ```{warning}
-I've (Liam) written most of the code, but I got Claude to make the documentation. 
+I (Liam) have written most of the code, but I got Claude to make the documentation. 
 I've checked that it all seems reasonable, but if something doesn't make 100% sense/work, then raise a GitHub issue
 or just email me.
 ```
