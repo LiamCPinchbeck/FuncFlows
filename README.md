@@ -1,10 +1,10 @@
-# FuncFlows
+# FuncyFlows
 
 Normalizing flows and flow matching on **function space**, for Bayesian inverse problems.
 
 The unknown is a function, represented by its coefficients in a fixed orthonormal basis. A transport reshapes a Gaussian reference measure into a prior or a posterior, and every transport carries its **Radon–Nikodym derivative with respect to that reference measure** — not a Lebesgue density, which does not exist in infinite dimensions.
 
-Based on [Functional Normalizing Flows](https://arxiv.org/abs/2411.13277) (P1) and [Learning Informative Priors with infinite-dimensional continuous normalizing flow](https://arxiv.org/abs/2609.03343v1) (P2).
+Package idea started when I read [Functional Normalizing Flows](https://arxiv.org/abs/2411.13277) (P1) and [Learning Informative Priors with infinite-dimensional continuous normalizing flow](https://arxiv.org/abs/2609.03343v1) (P2). Kinda diverged a little since then, but I highly recommend these papers for a fun read.
 
 
 ## Full Documentation
@@ -16,7 +16,7 @@ Based on [Functional Normalizing Flows](https://arxiv.org/abs/2411.13277) (P1) a
 ## Layout
 
 ```
-FuncFlows/
+FuncyFlows/
   base_measures/      bases, the reference measure
   transports/
     abstract_transformation.py    the Transformation interface
@@ -33,14 +33,14 @@ FuncFlows/
 
 ```python
 import torch
-from FuncFlows.base_measures.bases import FourierBasis
-from FuncFlows.base_measures.gaussian_reference_measure import GaussianReferenceMeasure
-from FuncFlows.transports.layers.base_discrete import DiscreteTransformation
-from FuncFlows.transports.layers.layer_classes import SylvesterLayer
-from FuncFlows.objectives.negative_logl import NegativeLogL
-from FuncFlows.objectives.reverse_kl import ReverseKL
-from FuncFlows.utils.gaussian_misfit import GaussianMisfit
-from FuncFlows.utils.train import train
+from FuncyFlows.base_measures.bases import FourierBasis
+from FuncyFlows.base_measures.gaussian_reference_measure import GaussianReferenceMeasure
+from FuncyFlows.transports.layers.base_discrete import DiscreteTransformation
+from FuncyFlows.transports.layers.layer_classes import SylvesterLayer
+from FuncyFlows.objectives.negative_logl import NegativeLogL
+from FuncyFlows.objectives.reverse_kl import ReverseKL
+from FuncyFlows.utils.gaussian_misfit import GaussianMisfit
+from FuncyFlows.utils.train import train
 
 NUM_MODES = 400
 basis = FourierBasis(NUM_MODES, physical_dim=2)
@@ -176,7 +176,6 @@ Every objective is a callable returning a scalar; `train(objective, parameters, 
 
 - [Functional Normalizing Flows](https://arxiv.org/abs/2411.13277) - Yang Zhao, Haoyu Lu, Junxiong Jia, Tao Zhou
 - [Learning Informative Priors with infinite-dimensional continuous normalizing flow for Bayesian inverse problems](https://arxiv.org/abs/2609.03343v1) - Yang Zhao, Junxiong Jia, Tao Zhou
-- [Universal Functional Regression with Neural Operator Flows](https://arxiv.org/abs/2404.02986) - Yaozhong Shi, Angela F. Gao, Zachary E. Ross, Kamyar Azizzadenesheli
 
 
 
@@ -221,18 +220,13 @@ Every objective is a callable returning a scalar; `train(objective, parameters, 
 - [Normalizing Flows for Probabilistic Modeling and Inference](https://arxiv.org/abs/1912.02762) - George Papamakarios, Eric Nalisnick, Danilo Jimenez Rezende, Shakir Mohamed, Balaji Lakshminarayanan
 - [Neural Ordinary Differential Equations](https://arxiv.org/abs/1806.07366) - Ricky T. Q. Chen, Yulia Rubanova, Jesse Bettencourt, David Duvenaud
 - [FFJORD: Free-form Continuous Dynamics for Scalable Reversible Generative Models](https://arxiv.org/abs/1810.01367) - Will Grathwohl, Ricky T. Q. Chen, Jesse Bettencourt, Ilya Sutskever, David Duvenaud
-- [Augmented Neural ODEs](https://arxiv.org/abs/1904.01681) - Emilien Dupont, Arnaud Doucet, Yee Whye Teh
-- [Invertible Monotone Operators for Normalizing Flows](https://openreview.net/forum?id=USoYIT4IQz) - Byeongkeun Ahn, Chiyoon Kim, Youngjoon Hong, Hyunwoo J. Kim
 
 
 ### Neural operators
 
 - [Fourier Neural Operator for Parametric Partial Differential Equations](https://arxiv.org/abs/2010.08895) - Zongyi Li, Nikola Kovachki, Kamyar Azizzadenesheli, Burigede Liu, Kaushik Bhattacharya, Andrew Stuart, Anima Anandkumar
 - [Neural Operator: Learning Maps Between Function Spaces](https://arxiv.org/abs/2108.08481) - Nikola Kovachki, Zongyi Li, Burigede Liu, Kamyar Azizzadenesheli, Kaushik Bhattacharya, Andrew Stuart, Anima Anandkumar
-- [Learning nonlinear operators via DeepONet based on the universal approximation theorem of operators](https://arxiv.org/abs/1910.03193) - Lu Lu, Pengzhan Jin, Guofei Pang, Zhongqiang Zhang, George Em Karniadakis
 - [Representation Equivalent Neural Operators: a Framework for Alias-free Operator Learning](https://arxiv.org/abs/2305.19913) - Francesca Bartolucci, Emmanuel de Bézenac, Bogdan Raonić, Roberto Molinaro, Siddhartha Mishra, Rima Alaifari
-
-
 
 
 
@@ -246,32 +240,4 @@ Every objective is a callable returning a scalar; `train(objective, parameters, 
 - [Preconditioned Langevin Dynamics with Score-Based Generative Models for Infinite-Dimensional Linear Bayesian Inverse Problems](https://arxiv.org/abs/2505.18276) - Lorenzo Baldassari, Ali Siahkoohi, Josselin Garnier, Knut Solna, Maarten V. de Hoop
 
 
-### Reduced bases and latent representations
-
-- [Model Reduction and Neural Networks for Parametric PDEs](https://arxiv.org/abs/2005.03180) - Kaushik Bhattacharya, Bamdad Hosseini, Nikola B. Kovachki, Andrew M. Stuart
-- [Normalizing field flows: Solving forward and inverse stochastic differential equations using physics-informed flow models](https://arxiv.org/abs/2108.12956) - Ling Guo, Hao Wu, Tao Zhou
-- [From data to functa: Your data point is a function and you can treat it like one](https://proceedings.mlr.press/v162/dupont22a.html) - Emilien Dupont, Hyunjik Kim, S. M. Ali Eslami, Danilo Jimenez Rezende, Dan Rosenbaum
-- [Reduced Basis Methods: Success, Limitations and Future Challenges](https://arxiv.org/abs/1511.02021) - Mario Ohlberger, Stephan Rave
-- [Efficiently Sampling Functions from Gaussian Process Posteriors](https://arxiv.org/abs/2002.09309) - James T. Wilson, Viacheslav Borovitskiy, Alexander Terenin, Peter Mostowsky, Marc Peter Deisenroth
-
-
-
-### Evaluation
-
-- [A note on the evaluation of generative models](https://arxiv.org/abs/1511.01844) - Lucas Theis, Aäron van den Oord, Matthias Bethge
-- [Do Deep Generative Models Know What They Don't Know?](https://arxiv.org/abs/1810.09136) - Eric Nalisnick, Akihiro Matsukawa, Yee Whye Teh, Dilan Gorur, Balaji Lakshminarayanan
-- [Validating Bayesian Inference Algorithms with Simulation-Based Calibration](https://arxiv.org/abs/1804.06788) - Sean Talts, Michael Betancourt, Daniel Simpson, Aki Vehtari, Andrew Gelman
-- [Sampling-Based Accuracy Testing of Posterior Estimators for General Inference](https://arxiv.org/abs/2302.03026) - Pablo Lemos, Adam Coogan, Yashar Hezaveh, Laurence Perreault-Levasseur
-- [Compressed Sensing using Generative Models](https://arxiv.org/abs/1703.03208) - Ashish Bora, Ajil Jalal, Eric Price, Alexandros G. Dimakis
-- [Deep Image Prior](https://arxiv.org/abs/1711.10925) - Dmitry Ulyanov, Andrea Vedaldi, Victor Lempitsky
-- [Regularized estimation of large covariance matrices](https://arxiv.org/abs/0803.1909) - Peter J. Bickel, Elizaveta Levina
-
-
-
-### Information field theory
-
-- [Information field theory for cosmological perturbation reconstruction and nonlinear signal analysis](https://arxiv.org/abs/0806.3474) - Torsten A. Enßlin, Mona Frommert, Francisco S. Kitaura
-- [Metric Gaussian Variational Inference](https://arxiv.org/abs/1901.11033) - Jakob Knollmüller, Torsten A. Enßlin
-- [Geometric Variational Inference](https://arxiv.org/abs/2105.10470) - Philipp Frank, Reimar Leike, Torsten A. Enßlin
-- [NIFTy.re: A Versatile Python Library for High-Performance Bayesian Imaging](https://arxiv.org/abs/2402.16683) - Gordian Edenhofer, Philipp Frank, Jakob Roth, Reimar H. Leike, Massin Guerdi, Lukas I. Scheel-Platz, Matteo Guardiani, Vincent Eberle, Margret Westerkamp, Torsten A. Enßlin
 
