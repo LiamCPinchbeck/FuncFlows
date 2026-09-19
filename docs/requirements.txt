@@ -1,0 +1,6 @@
+# Docs build only. The package's own dependencies live in ../src/pyproject.toml.
+sphinx>=7
+myst-nb>=1.0
+furo
+# the notebooks also want the package itself and matplotlib:
+#   python -m pip install -e "../src[examples]"
