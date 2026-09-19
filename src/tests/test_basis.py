@@ -1,7 +1,7 @@
 import pytest
 import torch
 
-from FuncFlows.base_measures.bases import CosineBasis, FourierBasis
+from FuncyFlows.base_measures.bases import CosineBasis, FourierBasis
 
 BASES = [CosineBasis, FourierBasis]
 

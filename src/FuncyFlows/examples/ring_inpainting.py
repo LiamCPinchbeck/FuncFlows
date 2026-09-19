@@ -24,9 +24,9 @@ import torch
 from _common import (DTYPE, uniform_grid, project, diagonal_measure_from_data, make_flow, field_grid,
                      LinearGaussianPosterior, whitened_context, conditional_samples, KernelGP,
                      best_coupling, score_2d, image_row, inpainting_figure, Timer)
-from FuncFlows.base_measures import FourierBasis
-from FuncFlows.objectives import ConditionalFlowMatching
-from FuncFlows.utils.train import train
+from FuncyFlows.base_measures import FourierBasis
+from FuncyFlows.objectives import ConditionalFlowMatching
+from FuncyFlows.utils.train import train
 
 torch.manual_seed(0)
 SIZE, M, CONTEXT, NUM_DRAWS, NOISE = 48, 320, 96, 300, 0.02

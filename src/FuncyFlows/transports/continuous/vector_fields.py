@@ -138,7 +138,7 @@ class TimeCosines(torch.nn.Module):
 
 
 class LinearField(VectorField):
-    """h(v,t,c) = gain_k(t) \odot v + s \odot W(t) c    """
+    r"""h(v,t,c) = gain_k(t) ⊙ v + s ⊙ W(t) c"""
 
     def __init__(self, num_functions, context_dim=None, num_time_modes=4, total_time=1.0, init_scale=0.0,
                  time_pair=False, dtype=torch.float64, mode_scale=None, rank=None, ):

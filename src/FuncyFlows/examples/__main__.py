@@ -1,8 +1,8 @@
 """Copy the example scripts into the current directory:
 
-    python -m FuncFlows.examples            # copies *.py (skips files that already exist)
-    python -m FuncFlows.examples --force    # overwrite
-    python -m FuncFlows.examples --list
+    python -m FuncyFlows.examples            # copies *.py (skips files that already exist)
+    python -m FuncyFlows.examples --force    # overwrite
+    python -m FuncyFlows.examples --list
 
 Then, e.g.:  python bimodal_posterior.py
 """

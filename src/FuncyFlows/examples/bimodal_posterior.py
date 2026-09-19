@@ -14,14 +14,14 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import torch
 
-from FuncFlows.base_measures import CosineBasis, GaussianReferenceMeasure
-from FuncFlows.transports.continuous import (ContinuousTransformation, SumField, LinearField,
+from FuncyFlows.base_measures import CosineBasis, GaussianReferenceMeasure
+from FuncyFlows.transports.continuous import (ContinuousTransformation, SumField, LinearField,
                                              MatrixField, TimeBasisConditioner)
-from FuncFlows.objectives import ReverseKL, FlowMatching
-from FuncFlows.samplers import latent_pcn
-from FuncFlows.utils.train import train
-from FuncFlows.utils.gaussian_misfit import GaussianMisfit
-from FuncFlows.diagnostics import ImportanceCorrection
+from FuncyFlows.objectives import ReverseKL, FlowMatching
+from FuncyFlows.samplers import latent_pcn
+from FuncyFlows.utils.train import train
+from FuncyFlows.utils.gaussian_misfit import GaussianMisfit
+from FuncyFlows.diagnostics import ImportanceCorrection
 
 torch.manual_seed(1)
 M, NUM_OBS, NOISE, N = 32, 15, 0.05, 2000

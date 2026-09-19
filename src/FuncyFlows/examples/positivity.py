@@ -15,9 +15,9 @@ import torch
 from _common import (DTYPE, uniform_grid, project, diagonal_measure_from_data, make_flow, field_grid,
                      flow_samples, best_coupling, MomentMatchedGaussian, KernelGP, energy_distance,
                      quantiles, report, curves_figure, Timer)
-from FuncFlows.base_measures import FourierBasis, GaussianReferenceMeasure
-from FuncFlows.objectives import FlowMatching
-from FuncFlows.utils.train import train
+from FuncyFlows.base_measures import FourierBasis, GaussianReferenceMeasure
+from FuncyFlows.objectives import FlowMatching
+from FuncyFlows.utils.train import train
 
 torch.manual_seed(2)
 M, PLOT_GRID, NUM_TRAIN, NUM_TEST, LOG_AMPLITUDE = 48, 256, 8000, 1500, 1.0

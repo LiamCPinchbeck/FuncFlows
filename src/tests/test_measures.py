@@ -1,8 +1,8 @@
 import pytest
 import torch
 
-from FuncFlows.base_measures.bases import CosineBasis, FourierBasis
-from FuncFlows.base_measures.gaussian_reference_measure import GaussianReferenceMeasure
+from FuncyFlows.base_measures.bases import CosineBasis, FourierBasis
+from FuncyFlows.base_measures.gaussian_reference_measure import GaussianReferenceMeasure
 
 
 @pytest.fixture(params=[CosineBasis, FourierBasis])

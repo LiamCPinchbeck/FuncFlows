@@ -3,8 +3,8 @@ requires = ["setuptools>=64"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "funcflows"
-version = "0.1.3"
+name = "funcyflows"
+version = "0.2.0"
 description = "Normalizing flows and flow matching on function spaces, with exact-trace vector fields"
 readme = "README.md"
 license = { text = "MIT" }
@@ -17,15 +17,14 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Topic :: Scientific/Engineering",
 ]
-# only what FuncFlows/ itself imports: torch everywhere, tqdm in utils/train.py
+# only what FuncyFlows/ itself imports: torch everywhere, tqdm in utils/train.py
 dependencies = ["torch", "torchvision", "tqdm", "scipy", "matplotlib"]
 
 [project.optional-dependencies]
-ot = ["scipy"]                       # optimal-transport coupling in flow matching (falls back without it)
 test = ["pytest"]
 
 [project.urls]
-Homepage = "https://pypi.org/project/funcflows/"
+Homepage = "https://pypi.org/project/funcyflows/"
 
 [tool.setuptools.packages.find]
-include = ["FuncFlows*"]
+include = ["FuncyFlows*"]

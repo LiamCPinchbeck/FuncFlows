@@ -29,9 +29,9 @@ import torch
 from _common import (DTYPE, uniform_grid, project, diagonal_measure_from_data, make_flow, field_grid,
                      flow_samples, best_coupling, MomentMatchedGaussian, KernelGP, energy_distance,
                      quantiles, report, Timer)
-from FuncFlows.base_measures import CosineBasis, GaussianReferenceMeasure
-from FuncFlows.objectives import FlowMatching
-from FuncFlows.utils.train import train
+from FuncyFlows.base_measures import CosineBasis, GaussianReferenceMeasure
+from FuncyFlows.objectives import FlowMatching
+from FuncyFlows.utils.train import train
 
 torch.manual_seed(4)
 M, LATENT_M, PLOT_GRID, NUM_TRAIN, NUM_TEST, TILT = 64, 40, 256, 16000, 2000, 5.0

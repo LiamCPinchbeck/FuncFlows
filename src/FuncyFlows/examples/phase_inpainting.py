@@ -35,9 +35,9 @@ import torch
 from _common import (DTYPE, uniform_grid, project, diagonal_measure_from_data, make_flow, field_grid,
                      LinearGaussianPosterior, whitened_context, conditional_samples, best_coupling, KernelGP,
                      score_2d, image_row, inpainting_figure, Timer)
-from FuncFlows.base_measures import FourierBasis
-from FuncFlows.objectives import ConditionalFlowMatching
-from FuncFlows.utils.train import train
+from FuncyFlows.base_measures import FourierBasis
+from FuncyFlows.objectives import ConditionalFlowMatching
+from FuncyFlows.utils.train import train
 
 torch.manual_seed(2026)
 # 80 sensors, not 256. With 256 points at 2% noise the interface is pinned almost everywhere and

@@ -2,7 +2,7 @@ import torch
 
 from ..abstract_transformation import Transformation
 from .layer_classes import DiscreteLayer
-from FuncFlows.base_measures import ReferenceMeasure
+from FuncyFlows.base_measures import ReferenceMeasure
 
 
 class DiscreteTransformation(Transformation):

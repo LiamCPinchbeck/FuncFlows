@@ -1,4 +1,4 @@
-"""Shared machinery for the FuncFlows examples. Nothing here is specific to one example.
+"""Shared machinery for the FuncyFlows examples. Nothing here is specific to one example.
 
 Coefficients everywhere: a function on [0,1]^d is its vector of coefficients on a FourierBasis /
 CosineBasis. `project` gets you there from values on a uniform grid; `basis.evaluate(points)` gets
@@ -23,11 +23,11 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import torch
 
-from FuncFlows.base_measures import GaussianReferenceMeasure
-from FuncFlows.transports.continuous import (ContinuousTransformation, SumField, LinearField,
+from FuncyFlows.base_measures import GaussianReferenceMeasure
+from FuncyFlows.transports.continuous import (ContinuousTransformation, SumField, LinearField,
                                              MatrixField, PointwiseField, TimeBasisConditioner,
                                              DataConditioner, VectorField)
-from FuncFlows.samplers import latent_pcn
+from FuncyFlows.samplers import latent_pcn
 
 DTYPE = torch.float64
 

@@ -1,4 +1,4 @@
-# FuncFlows
+# FuncyFlows
 
 Normalizing flows and flow matching on function spaces.
 
@@ -10,14 +10,14 @@ reference measure is exact — no Hutchinson estimators — which makes reverse-
 likelihood training and importance reweighting usable at hundreds of modes.
 
 ```bash
-pip install funcflows            # torch + tqdm
+pip install funcyflows            # torch + tqdm
 ```
 
 
 ## Examples
 
 ```bash
-python -m FuncFlows.examples        # copies the example scripts into the current directory
+python -m FuncyFlows.examples        # copies the example scripts into the current directory
 python bimodal_posterior.py         # then run any of them
 ```
 
@@ -54,11 +54,11 @@ divergence is unchanged (similarity transform). Always pass it.
 
 ```python
 import torch
-from FuncFlows.base_measures import CosineBasis, GaussianReferenceMeasure
-from FuncFlows.transports.continuous import (ContinuousTransformation, SumField, LinearField,
+from FuncyFlows.base_measures import CosineBasis, GaussianReferenceMeasure
+from FuncyFlows.transports.continuous import (ContinuousTransformation, SumField, LinearField,
                                              MatrixField, TimeBasisConditioner)
-from FuncFlows.objectives import FlowMatching
-from FuncFlows.utils.train import train
+from FuncyFlows.objectives import FlowMatching
+from FuncyFlows.utils.train import train
 
 M = 64
 basis = CosineBasis(M)
@@ -85,9 +85,9 @@ scipy and only makes sense for an unconditional flow.
 ## 2. Posterior from a likelihood (no samples needed)
 
 ```python
-from FuncFlows.objectives import ReverseKL
-from FuncFlows.utils.gaussian_misfit import GaussianMisfit
-from FuncFlows.diagnostics import ImportanceCorrection
+from FuncyFlows.objectives import ReverseKL
+from FuncyFlows.utils.gaussian_misfit import GaussianMisfit
+from FuncyFlows.diagnostics import ImportanceCorrection
 
 prior = GaussianReferenceMeasure(basis, alpha=0.05, power=2.0)     # Matérn-like spectrum
 phi_obs = basis.evaluate(obs_points)                               # [n_obs, M]
@@ -108,8 +108,8 @@ latent space, whose acceptance needs no Jacobian.
 ## 3. Amortised posterior (condition on data)
 
 ```python
-from FuncFlows.transports.continuous import DataConditioner
-from FuncFlows.objectives import ConditionalFlowMatching
+from FuncyFlows.transports.continuous import DataConditioner
+from FuncyFlows.objectives import ConditionalFlowMatching
 
 C = ...                                                    # context dimension (e.g. whitened projected data)
 field = SumField(
@@ -133,7 +133,7 @@ posterior is available in closed form, use it as the base measure and let the fl
 ## Diagnostics
 
 ```python
-from FuncFlows.diagnostics import coverage_curve, coverage_error
+from FuncyFlows.diagnostics import coverage_curve, coverage_error
 levels, coverage = coverage_curve(samples, truths, weights=1 / measure.scale)   # TARP; samples [cases, draws, M]
 coverage_error(levels, coverage)     # signed max gap from the diagonal: negative = overconfident
 ```
@@ -141,11 +141,11 @@ coverage_error(levels, coverage)     # signed max gap from the diagonal: negativ
 ## Layout
 
 ```
-FuncFlows/
+FuncyFlows/
   base_measures/     bases, GaussianReferenceMeasure
   transports/        continuous/: fields, conditioners, ContinuousTransformation
                      (grid_fields.py: PointwiseField, one FNO-style spatial layer with exact trace)
-  examples/          python -m FuncFlows.examples
+  examples/          python -m FuncyFlows.examples
   objectives/        flow_matching, reverse_kl, negative_logl
   samplers/          latent_pcn
   diagnostics/       importance, coverage

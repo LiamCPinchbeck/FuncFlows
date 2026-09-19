@@ -1,6 +1,6 @@
 import torch
 
-from FuncFlows.base_measures import ReferenceMeasure
+from FuncyFlows.base_measures import ReferenceMeasure
 
 
 class Transformation(torch.nn.Module):
