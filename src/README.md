@@ -2,6 +2,11 @@
 
 Normalizing flows and flow matching on function spaces.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/LiamCPinchbeck/FuncFlows/main/docs/logo_flow.gif"
+       alt="a flow turning Gaussian noise into the FuncyFlows logo" width="340">
+</p>
+
 A function is represented by its coefficients on a Laplacian eigenbasis (`CosineBasis` or
 `FourierBasis`), the reference measure is a Gaussian on those coefficients, and a transport is a
 neural ODE in coefficient space. The vector fields (`LinearField`, `MatrixField`) have closed-form
@@ -12,6 +17,8 @@ likelihood training and importance reweighting usable at hundreds of modes.
 ```bash
 pip install funcyflows            # torch + tqdm
 ```
+
+Full documentation can be found [here](https://funcyflows.readthedocs.io/en/latest/).
 
 
 ## Examples

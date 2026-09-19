@@ -2,6 +2,11 @@
 
 Normalizing flows and flow matching on **function space**, for Bayesian inverse problems.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/LiamCPinchbeck/FuncFlows/main/docs/logo_flow.gif"
+       alt="a flow turning Gaussian noise into the FuncyFlows logo" width="340">
+</p>
+
 The unknown is a function, represented by its coefficients in a fixed orthonormal basis. A transport reshapes a Gaussian reference measure into a prior or a posterior, and every transport carries its **Radon–Nikodym derivative with respect to that reference measure** — not a Lebesgue density, which does not exist in infinite dimensions.
 
 Package idea started when I read [Functional Normalizing Flows](https://arxiv.org/abs/2411.13277) (P1) and [Learning Informative Priors with infinite-dimensional continuous normalizing flow](https://arxiv.org/abs/2609.03343v1) (P2). Kinda diverged a little since then, but I highly recommend these papers for a fun read.

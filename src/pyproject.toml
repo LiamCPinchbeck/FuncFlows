@@ -18,13 +18,15 @@ classifiers = [
     "Topic :: Scientific/Engineering",
 ]
 # only what FuncyFlows/ itself imports: torch everywhere, tqdm in utils/train.py
-dependencies = ["torch", "torchvision", "tqdm", "scipy", "matplotlib"]
+dependencies = ["torch", "tqdm", "scipy", "matplotlib"]
 
 [project.optional-dependencies]
 test = ["pytest"]
 
 [project.urls]
-Homepage = "https://pypi.org/project/funcyflows/"
+Homepage = "https://github.com/LiamCPinchbeck/FuncFlows"
+Documentation = "https://funcyflows.readthedocs.io/en/latest/"
+Source = "https://github.com/LiamCPinchbeck/FuncFlows"
 
 [tool.setuptools.packages.find]
 include = ["FuncyFlows*"]
