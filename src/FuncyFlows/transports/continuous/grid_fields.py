@@ -52,15 +52,18 @@ class GridTransform(torch.nn.Module):
     Notes
     -----
     1. The grid is **cell-edge**: xₚ = p/G for p = 0 … G-1.
+
        - Not cell-centred, so the FFT needs no half-sample phase factor.
        - On a periodic uniform grid the rectangle rule is spectrally accurate for band-limited
          functions, so nothing fancier (trapezium, Gauss) buys anything for a Fourier basis.
 
     2. Dense path. Store Φ as a [Gᵈ, M] buffer and matrix-multiply.
+
        - Works for any basis, any grid size.
        - Cost O(B·M·Gᵈ) per direction, and O(Gᵈ·M) of memory.
 
     3. FFT path. Separable Fourier bases only.
+
        - One rfft/irfft per axis, the d axes done in turn with ``movedim``.
        - Cost O(d·B·Gᵈ·log G), no dense matrix touched.
        - The packed [M] coefficient vector is scattered into a [max_axis_mode]ᵈ tensor-product
@@ -70,6 +73,7 @@ class GridTransform(torch.nn.Module):
          1/G and √2/G coming back.
 
     4. Which path, via ``mode``:
+
        - ``"auto"`` (default): build the FFT tables if the basis exposes ``wavenumbers``, keep the
          FFT only if ``_agrees`` passes, otherwise fall back to dense.
        - ``"dense"``: never try the FFT.
@@ -303,6 +307,8 @@ class PointwiseField(VectorField):
 
     **Layer Diagram**
 
+    ::
+
     
                     g(x,t)      ū = Φ(κ(t) ⊙ ṽ)      c(x,t)              a(x,t)
                        └──────────────┬──────────────────┘                  │
@@ -340,33 +346,40 @@ class PointwiseField(VectorField):
         order one before anything nonlinear sees it. (Undone at the end; the divergence is unchanged.)
         This is done with the `mode_scale` attributes.
 
-    2. Go to the grid. Evaluate the whitened function at G uniformly spaced points. 
+    2. Go to the grid. Evaluate the whitened function at G uniformly spaced points.
+
         - Also build a low-pass copy: keep only the first few modes, each scaled by a learned number, and evaluate
-        that too. This gives each grid point a local average to compare itself against. Giving more context on the 
-        'neighbourhoods' of the points.
+          that too. This gives each grid point a local average to compare itself against.
+          Giving more context on the 'neighbourhoods' of the points.
 
         - The grid transformations are handled by, you guessed it, `GridTransform`. 
         - Do you ever worry that you make variable names __too__ obvious? Just me? Neat
 
     3. Form the pre-activation at every grid point
+
         - The operation in english is
-            - a *learned* gain times the function value, 
-            - plus the low-pass copy, 
-            - plus a learned offset. 
+
+          - a *learned* gain times the function value,
+          - plus the low-pass copy,
+          - plus a learned offset.
+
         - Gain and offset are smooth functions of position (a handful of low spatial modes each), so neighbouring points are treated alike.
         - They don't depend on the functions/function coefficients being transformed. Keeping the derivative tractable.
     
-    4. Apply `tanh`, point by point. 
+    4. Apply `tanh`, point by point.
+
         - This is the only place a non-linearity comes in for this class by itself. 
         - This simplicity keeps the divergence closed-form.
         - Use `SumField` would stack this, but not compose the non-linearity. There should be enough seeing as the transformation
-            is done at every integration step though.
+          is done at every integration step though.
 
-    5. Multiply by a learned amplitude, also a smooth function of position. 
+    5. Multiply by a learned amplitude, also a smooth function of position.
+
         - This decides how much velocity the layer is allowed to produce in each region.
         - Starts small so the flow starts near the identity (controlled by init_scale) so the flow starts near the identity
 
     6. Transform back to coefficients
+
         - integrate against each basis function over the grid (a sum over grid points weighted by the cell area), then un-whiten.
 
     Every learned quantity (gain, offset, amplitude, low-pass scalings) is a short cosine series in 'flow time', 
@@ -635,6 +648,8 @@ class OperatorField(VectorField):
 
     **Layer Diagram**
 
+    ::
+
     
                                                                b_l(t,c)
                                                                    │
@@ -684,7 +699,7 @@ class OperatorField(VectorField):
     ℓ         `lift`                    [C]             fixed channel scale; buffer, not learned
     z_l       `state`                   [B, Gᵈ, C]      layer state on the grid
     W_l(t)    `pointwise_stack[l]`      [T_m, C, C]     local channel mixing
-    κ_l(t)    `spectral_stack[l]`       [T_m, C, C, N_s] per-mode multiplier, dense in channels
+    κ_l(t)    `spectral_stack[l]`       [T_m,C,C,N_s]   per-mode multiplier, dense in channels
     κ_l(t)_k  `multipliers`             [C, C, M]       the same, after both contractions
     b_l(t,c)  `bias_stack[l]`           [T_m, C]        per-channel offset; the context entry point
     π(t)      `project_stack`           [T_m, C]        channel readout
@@ -759,12 +774,14 @@ class OperatorField(VectorField):
 
     1. Whiten and lift. Divide by the base-measure scales, evaluate on the grid, and copy the
        single field into ``num_channels`` identical channels scaled by ``lift``.
+
        - ``lift`` is a **buffer, not a parameter**: a whitened field is O(√num_active) on the grid,
          so without the ``num_active^-1/2`` factor every ``tanh`` starts saturated and nothing --
          neither signal nor gradient -- reaches layer 2. Same trap as ``PointwiseField``'s ``κ``.
        - All channels start identical; they only differentiate through ``pointwise_stack``.
 
     2. Each layer does three things and then a ``tanh``:
+
        - ``W_l z``: mixes channels *at each grid point*, local.
        - ``K_l z``: projects to coefficients, multiplies each mode by a learned number, and comes
          back. Global, and the only way information crosses the grid inside the stack.
@@ -799,6 +816,7 @@ class OperatorField(VectorField):
     ***DANGER DANGER***
 
     1. **The estimated trace is unbiased in log, but biased in density.**
+
        - Hutchinson gives an unbiased :math:`\mathrm{Tr}\,J`, so ``log_rn_at`` is unbiased,
        - BUT importance weights exponentiate it:
          :math:`\mathbb{E}[e^{\epsilon}] \neq e^{\mathbb{E}[\epsilon]}`.
@@ -806,12 +824,13 @@ class OperatorField(VectorField):
          noisy.
 
     2. **``latent_pcn`` is invalid with this field.**
-       - Its acceptance ratio needs the exact ``log_rn_at``;
-         - a noisy one makes the chain target the wrong measure rather than a noisy version of the
-           right one.
+
+       - Its acceptance ratio needs the exact ``log_rn_at``: a noisy one makes the chain target
+         the wrong measure rather than a noisy version of the right one.
 
     3. **Aliasing.** ``PointwiseField`` wants ``grid_size >= 6 * k_max`` because one ``tanh``
        reaches 3·k_max.
+
        - Composing L of them reaches further; the harmonic amplitudes decay, so ``2 * 3^L * k_max``
          is pessimistic.
        - Treat ``6 * k_max`` as a floor here, not a rule -- and note that unlike ``PointwiseField``
@@ -819,6 +838,7 @@ class OperatorField(VectorField):
 
     4. **No residual connections.** ``z_l = tanh(...)`` overwrites rather than adds, so the signal
        passes through L saturating nonlinearities in series.
+
        - Combined with the zero-init of ``spectral_stack``, layers 2…L start as near-copies of a
          single ``tanh``
        - depth only appears once training has *moved* the weights.
@@ -845,11 +865,10 @@ class OperatorField(VectorField):
         Time-mode-first stacks contracted with ``cosines(t)``; ``spectral_stack`` starts at zero.
     trace_samples : int
         Hutchinson probes per evaluation.
-    supports_batched_time : bool
-        True -- ``time_value`` may carry a leading batch dimension.
     """
 
     supports_batched_time = True
+    """``time_value`` may carry a leading batch dimension."""
 
     def __init__(self, basis, num_active, grid_size, num_channels=4, num_layers=3,
                  num_time_modes=4, num_spectral_modes=8, context_dim=0, total_time=1.0,

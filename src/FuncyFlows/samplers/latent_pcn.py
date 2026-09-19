@@ -27,7 +27,7 @@ def latent_pcn(flow, potential, num_chains=64, num_steps=2000, beta=0.2, init=No
     potential : callable
         ``potential(v) -> [batch]``, the NEGATIVE log of the target's density relative to the
         flow's pushforward, as a function of COEFFICIENTS. See explanation further down
-         in this docstring for which of the two forms you want.
+        in this docstring for which of the two forms you want.
     num_chains : int
         Chains advanced in lockstep. They share one ``transport`` call per step, so more chains are
         nearly free up to the batch the ODE can hold.
@@ -62,14 +62,14 @@ def latent_pcn(flow, potential, num_chains=64, num_steps=2000, beta=0.2, init=No
     draws : Tensor [num_kept * num_chains, M]
         Post-burn-in states in COEFFICIENT space, chains concatenated.
     info : dict
-        ``acceptance``   mean acceptance after burn-in (the number that matters).
-        ``acceptance_burn``  mean acceptance during burn-in, for checking the adaptation worked.
-        ``beta``         final step size.
-        ``potential``    mean potential over the kept states; a sanity check that it plateaued.
-        ``moved``        mean distance travelled from the starting states, relative to their own
-                         norm. Below ~0.1 the chain never left its initialisation and the "posterior"
-                         you are looking at is whatever you passed as ``init``. Reported only when
-                         ``init`` is given.
+        - ``acceptance`` -- mean acceptance after burn-in (the number that matters).
+        - ``acceptance_burn`` -- mean acceptance during burn-in, for checking the adaptation
+          worked.
+        - ``beta`` -- final step size.
+        - ``potential`` -- mean potential over the kept states; a sanity check that it plateaued.
+        - ``moved`` -- mean distance travelled from the starting states, relative to their own
+          norm. Below ~0.1 the chain never left its initialisation and the "posterior" you are
+          looking at is whatever you passed as ``init``. Reported only when ``init`` is given.
 
 
     Preconditioned Crank-Nicolson MCMC in the latent space of a trained flow.
@@ -128,21 +128,22 @@ def latent_pcn(flow, potential, num_chains=64, num_steps=2000, beta=0.2, init=No
 
     Two cases cover the below, they are not the same call :grimace: :
 
-      * T is a learned PRIOR, so rho = q and the log terms cancel:
+      * T is a learned PRIOR, so rho = q and the log terms cancel::
 
             potential = misfit
 
         The flow's Jacobian never enters, so any trained prior flow works and the trace
         need not even be computable.
 
-      * T approximates the POSTERIOR and the prior is the base measure, rho = mu0:
+      * T approximates the POSTERIOR and the prior is the base measure, rho = mu0::
 
             potential = lambda v: misfit(v) + flow.log_rn_at(v)
 
         Here the trace DOES enter, and it unfortunately has to be exact. 
         A Hutchinson estimate doesn't give a noisy version of the 'correct' chain:
-            - the randomness lands in the accept test
-            - so the chain has a different invariant measure. 
+
+        - the randomness lands in the accept test
+        - so the chain has a different invariant measure.
     """
     if not 0 < beta <= 1:
         raise ValueError(f"beta must be in (0, 1]; got {beta}")

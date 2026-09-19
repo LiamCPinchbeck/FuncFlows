@@ -35,9 +35,18 @@ autodoc_typehints = "description"
 napoleon_google_docstring = False
 napoleon_numpy_docstring = True
 
-# Uncomment to build the API pages without a working torch install. Mocking torch makes
-# anything that subclasses torch.nn.Module render thinly, so prefer a real environment.
-# autodoc_mock_imports = ["torch", "tqdm", "scipy", "matplotlib"]
+# Autodoc imports the package, which imports torch. Read the Docs doesn't have torch installed
+# (and installing it there tends to get the build killed for memory), so the import fails, autodoc
+# warns instead of erroring, and every API page renders empty while the build still goes green.
+#
+# So: mock the heavy dependencies only when they aren't actually there. Local builds with a real
+# venv get the full thing; RTD gets mocked stand-ins, which still render signatures, docstrings and
+# class hierarchies -- just thinner for anything subclassing torch.nn.Module.
+try:
+    import torch  # noqa: F401
+except ImportError:
+    autodoc_mock_imports = ["torch", "tqdm", "scipy", "matplotlib"]
+    print("conf.py: torch not importable, mocking heavy deps for autodoc")
 
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
