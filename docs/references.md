@@ -98,21 +98,3 @@ Flows.* ICML 2022. [arXiv:2206.09016](https://arxiv.org/abs/2206.09016)
 : The `path_gradient=True` option on `ReverseKL`. Companion paper
   [arXiv:2207.08219](https://arxiv.org/abs/2207.08219) covers the forward-KL case.
 
-## Further reading
-
-(ref-funcnf)=
-**Functional normalizing flow for statistical inverse problems of PDEs.**
-[arXiv:2411.13277](https://arxiv.org/abs/2411.13277)
-: Closest neighbour to this package in the literature. Worth a read before you claim anything is
-  novel.
-
-(ref-saroundtrip)=
-**Bayesian imaging inverse problem with SA-Roundtrip prior via HMC-pCN sampler.**
-[arXiv:2310.17817](https://arxiv.org/abs/2310.17817)
-: The nearest published thing to `latent_pcn` — pCN in the latent space of a learned generative
-  prior, in imaging rather than function space.
-
-```{warning}
-That last one was found by search and the body hasn't been read. Don't cite it in a paper on our
-say-so.
-```
