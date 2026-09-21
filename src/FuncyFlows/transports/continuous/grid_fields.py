@@ -961,3 +961,87 @@ class OperatorField(VectorField):
 
         return self.estimated_velocity_and_trace(coeffs, time_value, context)
 
+
+
+
+class DeepPointwiseField:
+    r"""DeepPointwiseField — L residual pointwise layers; Jacobian stays diagonal in x
+    """
+
+
+    def __init__(self, basis, num_active, grid_size, num_time_modes=4, num_field_modes=32,
+                 num_spectral_modes=0, context_dim=0, total_time=1.0, mode_scale=None,
+                 init_scale=0.05, transform="auto", time_pair=False, dtype=torch.float64,):
+
+        super().__init__()
+        self.num_active, self.num_time_modes = num_active, num_time_modes
+        self.total_time, self.mode_scale, self.dtype = total_time, mode_scale, dtype
+        self.physical_dim, self.grid_size = basis.physical_dim, grid_size
+        self.quadrature_weight = grid_size ** (-basis.physical_dim)
+
+        self.cosines = TimeCosines(num_time_modes, total_time, dtype, time_pair)
+
+        self.transform = GridTransform(basis, num_active, grid_size, mode=transform, dtype=dtype)
+
+        self.quadrature_weight = self.transform.quadrature_weight
+        device = basis.laplacian_eigenvalues.device
+        values = self.transform.basis_grid
+
+        self.register_buffer("squared_sum", (values ** 2).sum(1))          # S(x), [grid^d]
+        self.register_buffer("field_values", values[:, :num_field_modes])  # a, g, c stay dense
+
+        gain_scale = init_scale / num_field_modes ** 0.5
+        self.gain_stack = torch.nn.Parameter(
+            gain_scale * torch.randn(num_time_modes, num_field_modes, dtype=dtype))
+        
+        self.slope_stack = torch.nn.Parameter(torch.zeros(num_time_modes, num_field_modes, dtype=dtype))
+        self.shift_stack = torch.nn.Parameter(torch.zeros(num_time_modes, num_field_modes, dtype=dtype))
+
+        with torch.no_grad():                       # phi_0 = 1, so this makes g(x) a constant.
+            # whitened coefficients are O(1) each, so the whitened field is O(sqrt(num_active))
+            self.slope_stack[0, 0] = 1.0 if mode_scale is None else num_active ** -0.5
+
+        self.context_stack = None
+        if context_dim:
+            self.context_stack = torch.nn.Parameter(
+                init_scale / context_dim ** 0.5
+                * torch.randn(num_time_modes, num_field_modes, context_dim, dtype=dtype))
+
+
+        self.kappa_stack = None
+        if num_spectral_modes:
+            logs = torch.log1p(basis.laplacian_eigenvalues[:num_active].to(dtype))
+            span = (logs.max() - logs.min()).clamp(min=1e-12)
+            position = ((logs - logs.min()) / span).clamp(0, 1)
+            orders = torch.arange(num_spectral_modes, dtype=dtype, device=device)
+            self.register_buffer("spectral_features", torch.cos(torch.pi * orders * position[:, None]))
+            self.register_buffer("squared_basis", values ** 2)             # [grid^d, num_active]
+            # zero, not init_scale * randn: the slope path is normalised by num_active^-1/2 so the
+            # pre-activation is O(1), but kappa multiplies whitened coefficients that sum over all
+            # num_active modes. At 0.05 * randn that term is O(0.17 * sqrt(2000)) ~ 7.6, tanh is
+            # flat, (1 - hidden^2) ~ 0, and neither the trace nor any gradient gets through.
+            self.kappa_stack = torch.nn.Parameter(
+                torch.zeros(num_time_modes, num_spectral_modes, dtype=dtype))
+
+
+        if hasattr(basis, "wavenumbers"):
+            k_max = int(basis.wavenumbers[:num_active].abs().max().item())
+        else:                                   # cosine: lambda_k = (k pi)^2
+            k_max = int(round(basis.laplacian_eigenvalues[:num_active].max().sqrt().item() / torch.pi))
+
+
+        if grid_size < 6 * k_max:
+            warnings.warn(f"grid_size {grid_size} < 6 * k_max = {6 * k_max}: tanh harmonics alias back "
+                          f"onto the retained modes. The velocity tolerates this; the closed-form trace, "
+                          f"log_rn_at and ImportanceCorrection do not.", stacklevel=2)
+
+
+
+
+
+
+class SpectralStackField:
+    r"""SpectralStackField — L residual layers, each = spectral filter ∘ pointwise nonlinearity
+    """
+
+    pass

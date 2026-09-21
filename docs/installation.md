@@ -1,17 +1,17 @@
-# Installing it
+# Installation
 
 ```bash
-pip install funcyflows              # torch + tqdm, that's it
+pip install funcyflows      # voila, you did it!
 ```
 
-`torch` is enormous and fussy about your hardware. If you need a specific CUDA or MPS build,
+`torch` can be quite large and fussy about your hardware. If you need a specific CUDA or MPS build,
 install that first from [pytorch.org](https://pytorch.org) and put FuncyFlows on top —
 otherwise pip will pick something for you and you may not like it.
 
 
 ## From a checkout
 
-The package lives under `src/`, so the editable install points there rather than at the repo
+The package lives under `src/` in the GitHub repo (currently named [FuncFlows](https://github.com/LiamCPinchbeck/FuncFlows)... sorry), so the editable install points there rather than at the repo
 root:
 
 ```bash
