@@ -132,6 +132,10 @@ it once — `(layer._map(layer.pull_back(x))[0] - x).abs().max()`.
 `f` is the time-`T` flow of `dv/dt = h(v,t)`, and `log_det = ∫ Tr Dh dt`. Compose fields with
 `SumField(*fields)` — velocities add, traces add.
 
+The integral is accumulated by the same RK4 scheme that advances the state, so **`log_det` is
+fourth-order accurate, not exact**. "Exact" in the table below is a claim about the integrand
+`Tr Dh` — a closed form with no estimator — and not about its integral.
+
 | field | what it does | trace |
 |---|---|---|
 | `AffineField(num_functions, ...)` | `gain_k(t)·v_k` — diagonal, full rank | exact, `O(M)` |
@@ -161,7 +165,7 @@ Every objective is a callable returning a scalar; `train(objective, parameters, 
 
 | objective | needs | use |
 |---|---|---|
-| `NegativeLogL(transformation, dataset_coeffs, batch_size=64)` | `pull_back` + log-det | fit a prior by exact maximum likelihood (P2 Alg. 1). **The only one a discrete stack can use.** |
+| `NegativeLogL(transformation, dataset_coeffs, batch_size=64)` | `pull_back` + log-det | fit a prior by maximum likelihood (P2 Alg. 1); exact for a discrete stack, solver-accurate for a flow. **The only one a discrete stack can use.** |
 | `FlowMatching(transformation, dataset_coeffs, batch_size, weights=None, coupling="independent")` | a continuous field | simulation-free prior fitting. `coupling="optimal"` is minibatch OT |
 | `PairedFlowMatching(...)` + `reflow_pairs(flow, count)` | a trained flow | reflow: refit on the model's own `(base, endpoint)` pairs, straighter paths |
 | `ConditionalFlowMatching(transformation, simulate, draw_base, batch_size, context_weight=0.0)` | a simulator | amortised posterior (FMPE). `context_weight > 0` gives conditional OT |

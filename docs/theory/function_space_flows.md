@@ -68,7 +68,7 @@ A flow is the time-$T$ solution of
 $$ \frac{\mathrm{d}v}{\mathrm{d}t} = h(v, t, c), $$
 
 integrated with RK4 ({ref}`Grathwohl et al., 2019 <ref-ffjord>` for the finite-dimensional
-version of what follows). Its pushforward has an exact RN derivative:
+version of what follows). Its pushforward has the RN derivative:
 
 $$ \log \frac{\mathrm{d}q}{\mathrm{d}\mu_0}(v_T)
    \;=\; \big(\text{Gaussian exponent at } v_0 \text{ minus at } v_T\big)

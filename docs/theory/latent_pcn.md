@@ -1,6 +1,6 @@
 # Latent pCN
 
-Exact posterior sampling inside the latent space of a trained flow. Condensed version; notebook
+Posterior sampling inside the latent space of a trained flow. Condensed version; notebook
 `05` runs the thing.
 
 ## Why not just do a random walk
@@ -78,10 +78,7 @@ Two cases, and they are **not** the same call:
 
 In the first, the flow's Jacobian cancels out entirely, so any trained prior flow works and the
 trace doesn't even need to be computable. In the second the trace shows up in the acceptance
-ratio and has to be exact.
-
-Get this wrong and nothing complains. The chain runs, accepts at a perfectly reasonable rate,
-and converges to the wrong measure.
+ratio.
 
 ## When it falls over
 
@@ -97,7 +94,7 @@ travelled relative to where they started; under about 0.1 and you're looking at 
 - {ref}`Cotter et al. (2013) <ref-pcn>` — pCN itself, and the dimension-robustness.
 - {ref}`Parno & Marzouk (2018) <ref-parno>` — running a sampler in a learned transport's latent space.
 - {ref}`Hoffman et al. (2019) <ref-neutra>` — NeuTra, same idea with HMC instead of pCN.
-- {ref}`arXiv:2310.17817 <ref-saroundtrip>` — the nearest published version of this exact combination.
+- {ref}`arXiv:2310.17817 <ref-saroundtrip>` — the nearest published version.
 
 Full entries on the {doc}`../references` page.
 

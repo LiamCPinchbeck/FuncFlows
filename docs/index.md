@@ -11,10 +11,7 @@ Normalizing flows and flow matching, but on **function spaces**.
 
 The idea: a function is its coefficient vector on a Laplacian eigenbasis, the
 reference measure is a Gaussian on those coefficients, and a transport is a neural ODE that
-moves them around. The vector fields are built so their divergence comes out in closed form,
-which means the density of the transported measure is *exact* — no Hutchinson probes. That one
-property is what makes reverse-KL training, likelihood training, importance reweighting and
-exact latent-space MCMC all still work at hundreds of modes, instead of exploding.
+moves them around. 
 
 ```{warning}
 I (Liam) have written most of the code, but I got Claude to make the documentation. 
@@ -83,11 +80,11 @@ references
 | `GaussianReferenceMeasure` | the base measure `N(0, diag(sigma^2))` on coefficients |
 | `LinearField` | per-mode gain, plus a drift that can depend on data |
 | `MatrixField` | one wide tanh layer across all coefficients |
-| `PointwiseField` | one FNO-ish spatial layer, trace still exact |
+| `PointwiseField` | one FNO-ish spatial layer |
 | `SumField` | adds fields together, and traces naturally add. |
 | `ContinuousTransformation` | the flow!: `transport`, `push_forward`, `pull_back`, `log_rn_at` |
 | `FlowMatching`, `ConditionalFlowMatching`, `ReverseKL`, `NegativeLogL` | things to minimise |
-| `latent_pcn` | exact MCMC, run inside the flow's latent space. Like this [arXiv:1412.5492](https://arxiv.org/abs/1412.5492)|
+| `latent_pcn` | MCMC, run inside the flow's latent space. Like this [arXiv:1412.5492](https://arxiv.org/abs/1412.5492)|
 | `ImportanceCorrection`, `coverage_curve` | some diagnostics |
 
 ## Indices

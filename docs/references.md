@@ -45,7 +45,7 @@ Variational Inference.* UAI 2018. [arXiv:1803.05649](https://arxiv.org/abs/1803.
 : Flow matching lifted to infinite dimensions. Source of the trace-class requirement on the
   reference covariance, and of the Feldman–Hájek / Cameron–Martin conditions that our truncation
   quietly satisfies. They use an FNO for the velocity and report no likelihoods — which, given the
-  exact-traces page, is not a coincidence.
+  traces page, is not a coincidence.
 
 (ref-fno)=
 **Li, Kovachki, Azizzadenesheli, Liu, Bhattacharya, Stuart & Anandkumar (2021)** — *Fourier Neural

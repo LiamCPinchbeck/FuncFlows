@@ -8,6 +8,6 @@ we're actually pushing around, and why it's a measure and not a density. The oth
 :maxdepth: 1
 
 function_space_flows
-exact_traces
+traces
 latent_pcn
 ```

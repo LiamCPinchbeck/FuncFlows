@@ -10,9 +10,24 @@ Normalizing flows and flow matching on function spaces.
 A function is represented by its coefficients on a Laplacian eigenbasis (`CosineBasis` or
 `FourierBasis`), the reference measure is a Gaussian on those coefficients, and a transport is a
 neural ODE in coefficient space. The vector fields (`LinearField`, `MatrixField`) have closed-form
-divergences, so the density of the transported measure relative to the
-reference measure is exact — no Hutchinson estimators — which makes reverse-KL training,
-likelihood training and importance reweighting usable at hundreds of modes.
+divergences — no Hutchinson estimators — so the log density of the transported measure relative to
+the reference measure carries no Monte Carlo noise, only the ODE solver's discretisation error.
+That is what makes reverse-KL training, likelihood training and importance reweighting usable at
+hundreds of modes.
+
+### What "exact" means here, and where it stops
+
+The **divergence** `Tr ∂h/∂v` is exact: a closed-form expression evaluated from the same forward
+pass, with no estimator anywhere. That is the property this package is built around.
+
+The **log-determinant** of the flow is not. It is `∫ Tr ∂h/∂v dt`, accumulated by the same RK4
+scheme that advances the state, so it inherits the solver's fourth-order accuracy. Two things
+follow, both O(h⁴): the reported value differs from the continuum log-determinant, and it differs
+from the log-determinant of the discrete map the sampler actually applies. Halving the step divides
+both by about sixteen — sweep `num_steps` against `torch.linalg.slogdet` of the map's Jacobian if
+you want the number for your model.
+
+Exact integrand, approximated integral.
 
 ```bash
 pip install funcyflows            # torch + tqdm
@@ -52,7 +67,7 @@ coefficient-space only. Each takes 3–12 minutes on a CPU. Except for cloud inp
 | `ContinuousTransformation(measure, field, num_steps)` | the flow: `.transport(v0)`, `.push_forward`, `.pull_back`, `.log_rn_at(v)` |
 | `FlowMatching`, `ConditionalFlowMatching`, `ReverseKL`, `NegativeLogL` | objectives; each is a callable returning a loss |
 | `train(objective, params, num_steps, learning_rate)` | Adam loop, returns the loss history |
-| `ImportanceCorrection`, `coverage_curve`, `latent_pcn` | diagnostics and an exact latent-space MCMC sampler |
+| `ImportanceCorrection`, `coverage_curve`, `latent_pcn` | diagnostics, and a latent-space MCMC sampler whose acceptance needs no Jacobian |
 
 Every field takes `mode_scale=measure.scale`: the nonlinearity sees whitened coefficients and the
 divergence is unchanged (similarity transform). Always pass it.
@@ -83,7 +98,7 @@ losses = train(FlowMatching(flow, coeffs, batch_size=256, weights=1 / measure.sc
 draws = flow.transport(measure.sample(1000))              # [1000, M] new functions
 points = torch.linspace(0, 1, 400).reshape(-1, 1)
 values = draws @ basis.evaluate(points).T                 # [1000, 400] on a grid
-log_q = flow.log_rn_at(draws)                             # exact log density w.r.t. the reference measure
+log_q = flow.log_rn_at(draws)                             # log density w.r.t. the reference measure
 ```
 
 `weights=1/measure.scale` whitens the loss so high modes count; `coupling="optimal"` needs
@@ -105,12 +120,14 @@ flow = ContinuousTransformation(prior, field, num_steps=16)        # same field 
 train(ReverseKL(flow, potential, num_samples=64, path_gradient=True), flow.parameters(), num_steps=3000)
 
 draws = flow.transport(prior.sample(2000))
-check = ImportanceCorrection(flow, draws, potential)               # exact because the traces are exact
+check = ImportanceCorrection(flow, draws, potential)               # no probe noise: the divergence is closed form
 print(check.efficiency, check.log_evidence)                        # efficiency near 1 = posterior matched
 ```
 
 For an exact sampler on top of a learned prior use `latent_pcn(flow, potential)`: pCN in the flow's
-latent space, whose acceptance needs no Jacobian.
+latent space. Its acceptance ratio needs no Jacobian, so the solver's discretisation error cannot
+reach it — whatever measure the discrete flow pushes forward *is* the prior being sampled. That is
+the one place in the package where "exact" needs no qualifier.
 
 ## 3. Amortised posterior (condition on data)
 

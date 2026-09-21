@@ -1,4 +1,4 @@
-# Exact traces
+# Traces
 
 ## The thing you have to pay
 
@@ -38,42 +38,33 @@ with $w$ the cell volume. The `squared_sum` buffer is that inner sum, precompute
 
 **`SumField`** — velocities add, so traces add. That's it.
 
-## What exactness actually buys you
 
-| What you want to do | What you need |
-|---|---|
-| flow matching, sampling, TARP coverage | nothing. no trace at all |
-| `ReverseKL`, `NegativeLogL` training | a trace; estimated is survivable |
-| `ImportanceCorrection` ({ref}`Dax et al., 2023 <ref-dax>`) | exact |
-| `latent_pcn` on a posterior flow | exact, and not negotiable |
+## Where "exact" stops
 
-```{danger}
-An unbiased trace is **not** an unbiased density.
+Everything above is about the integrand. $\operatorname{Tr}\,\partial h/\partial v$ really is
+exact — a closed form, no estimator, no discretisation.
 
-Hutchinson noise lands in $\log \mathrm{d}q/\mathrm{d}\mu_0$. Then importance weights
-exponentiate it, and $\mathbb{E}[e^{\varepsilon}] \neq e^{\mathbb{E}[\varepsilon]}$. Your
-efficiency and log-evidence come out biased *upward* — not noisy, but actually biased. 
-You get a number that looks better than the truth, which is "not good".
+The integral is a different matter. `ContinuousTransformation` accumulates
 
-So: either you need the density and it has to be exact, or you don't and you should skip the
-trace entirely and save the backward passes. Hutchinson only earns its keep when you need a
-training signal you can't get any other way.
-```
+$$ \int_0^T \operatorname{Tr} \frac{\partial h}{\partial v}\,\mathrm{d}t $$
 
-## What it costs
+with the same RK4 weights that advance the state, so it is fourth-order accurate rather than
+exact. There are two gaps, both $O(h^4)$: against the continuum log-determinant, and against the
+log-determinant of the discrete map actually applied — the second matters because that map is what
+`transport` samples from. On a small nonlinear test field the two gaps fall by a factor of
+$\approx 16$ for every halving of the step, as they should.
 
-As far as I know, the restriction that one wants an exact trace is that no gate may depend on $v$. 
-That rules out just bolting a general neural network on as the velocity. It's also why `OperatorField` — which
-stacks layers and mixes between them — has an estimated trace.
+So the honest summary is: **exact integrand, approximated integral**. If you need the number for
+your own model, sweep `num_steps` and compare `flow._map(v)[1]` against
+`torch.linalg.slogdet` of the Jacobian of `lambda v: flow._map(v)[0]`.
 
-## Grid resolution (the one that will bite you)
+## Grid resolution 
 
 `PointwiseField` evaluates on a grid of size $G$. A tanh generates harmonics: the cubic term
 reaches $3k_{\max}$, and then Nyquist doubles it, so
 
 $$ G \;\geq\; 6\, k_{\max} $$
 
-or the projection back aliases and your "exact" trace is wrong. Note this has nothing to do
-with whatever resolution you happen to store your images at — set it from the basis
-truncation. Tying `grid_size` to the image size is an easy mistake and it fails silently,
-which is the worst kind.
+or the projection back aliases. Note this has nothing to do with whatever resolution you happen to store 
+your images at — set it from the basis truncation. Tying `grid_size` to the image size is an easy mistake 
+and it fails silently, which is not great.
