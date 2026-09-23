@@ -22,11 +22,7 @@ class Conditioner(torch.nn.Module):
 # Just a class for conditioners in the velocity fields script
     # that handles unknown parameters that are functions of just time
 class TimeBasisConditioner(Conditioner):
-    """A(t) = sum_m cos(m pi t / T) A_m, same for B and the biases. Genuine time dependence
-    for num_time_modes * 2 * L * r parameters, instead of a net emitting that many per step.
-
-    The contraction over m is a tensordot, which never materialises the [T, r, L] product the
-    broadcast-and-sum form did — that intermediate was rebuilt four times per RK4 step.
+    """A(t) = sum_m cos(m pi t / T) A_m, same for B and the biases.
     """
 
     def __init__(self, num_functions, num_terms, num_time_modes=4, total_time=1.0,

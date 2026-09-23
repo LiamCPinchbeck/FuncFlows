@@ -6,10 +6,9 @@ from ..abstract_transformation import Transformation
 class ContinuousTransformation(Transformation):
     """f = the time-T flow of dv/dt = h(v,t). log_det_term is the integral of Tr Dh (P2 Thm 5).
 
-    One integrator serves every use. with_trace=False skips the log-determinant entirely, which
-    is what transport (sampling) and pull_back need; with_trace=True uses velocity_and_trace so
-    the trace shares the field evaluation instead of repeating it. The old version recomputed the
-    field twice per RK4 stage in every density-bearing solve.
+    with_trace=False skips the log-determinant, which the transport (sampling) and pull_back need; 
+    with_trace=True uses velocity_and_trace so the trace shares the field evaluation instead of 
+    repeating it.
     """
 
     def __init__(self, base_measure, vector_field, total_time=1.0, num_steps=20, method="rk4"):

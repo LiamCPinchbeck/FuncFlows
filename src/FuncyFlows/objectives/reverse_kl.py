@@ -10,10 +10,7 @@ class ReverseKL:
     path_gradient=True uses the path-gradient (sticking-the-landing) estimator of Vaitl et al.
     2022. The reparameterised gradient splits into a path term and a term that differentiates the
     density at a FIXED sample; the second has zero mean and pure variance, and it vanishes only in
-    expectation, so dropping it leaves an unbiased estimator with strictly less noise. The gain
-    grows as the fit improves: in the Gaussian check in this package's notes the variance ratio is
-    about 1.4x far from the optimum and over 1000x near it, which is exactly where the ordinary
-    estimator stalls. It also skips the trace on the forward pass, so a step is no more expensive.
+    expectation, so dropping it leaves an unbiased estimator with less noise.
     """
 
     def __init__(self, transformation, potential, num_samples=30, context=None, path_gradient=False):

@@ -4,10 +4,10 @@ from FuncyFlows.base_measures import ReferenceMeasure
 
 
 class Transformation(torch.nn.Module):
-    """A measurable bijection of coefficient space, with its Radon-Nikodym derivative.
+    """A bijection of coefficient space, with Radon-Nikodym derivative.
 
-    `context` threads through every method so conditional fields work end to end; unconditional
-    transformations simply ignore it.
+    `context` threads through every method so conditional fields should work end to end; unconditional
+    transformations (should) simply ignore it.
     """
 
     def __init__(self, base_measure: ReferenceMeasure):

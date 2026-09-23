@@ -3,6 +3,10 @@ import torch
 from .vector_fields import VectorField, TimeCosines, combine_context
 import warnings
 
+# Heyo, so the docstrings are HUGE in this script on purpose. These classes are kind of the most complicated
+    # things in the package. They're basically a last result for flexibility, but I think are pretty cool 
+    # (if I don't say so myself). PointwiseField still provides stable trace / RN derivative estimates,
+    # OperatorField not so much,
 ################################################################################################################
 ################################################################################################################
 ################################################################################################################
@@ -281,8 +285,8 @@ class GridTransform(torch.nn.Module):
 
 # took me 30 minutes to figure out how to do the math formatting, you better appreciate it!!
     # but yes I got Gemini to do the unicode function version. Ain't nobody got time for that.
-    # but yes the docstring is huge coz if it were me, I'd have no idea what was going on
-    # even with my attempt to make informative variable names
+    # but yes the docstring is huge coz if it were me reading this for the first time, I'd have 
+    # no idea what was going on, even with my attempt to make informative variable names
 
 class PointwiseField(VectorField):
     r"""One Fourier-neural-operator layer (arXiv:2010.08895).

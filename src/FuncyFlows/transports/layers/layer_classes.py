@@ -31,6 +31,7 @@ class HouseholderLayer(DiscreteLayer):
         log_det = torch.full_like(coeffs[..., 0], math.log(0.5))         # inherits device
         return coeffs_out, log_det
 
+    # basically, just the above reversed. Have a look at the refs for why it's not exactly the reverse
     def pull_back(self, coeffs_out, context=None):
         direction = self.direction_raw / self.direction_raw.norm()
         head = coeffs_out[..., :self.num_modes]
@@ -68,11 +69,8 @@ class SylvesterLayer(DiscreteLayer):
         log_det = torch.log1p((1 - hidden ** 2) * diag_after).sum(-1)
         return torch.cat([head, tail], dim=-1), log_det
 
+    # basically, just the above reversed. Have a look at the refs for why it's not exactly the reverse
     def pull_back(self, coeffs_out, context=None, num_iterations=30):
-        """Fixed-point inverse. Converges when the layer is a contraction, which the small
-        init_scale and |diag(A)| < 1 encourage but do not guarantee. No residual check inside
-        the loop: on a GPU that would be a sync per iteration. Check once outside if in doubt:
-        (layer._map(layer.pull_back(x))[0] - x).abs().max()."""
         before, after, _ = self.matrices()
         head_out, tail = coeffs_out[..., :self.num_modes], coeffs_out[..., self.num_modes:]
         head = head_out
